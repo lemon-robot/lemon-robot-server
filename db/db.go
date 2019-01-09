@@ -17,6 +17,8 @@ var DbObj *gorm.DB
 func InitDb() *gorm.DB {
 	logger.Info("The system started trying to connect to the database.")
 	db, err := gorm.Open(sysinfo.LrConfig().DbType, sysinfo.LrConfig().DbUrl)
+	// if enabled debug mode, show gorm log
+	db.LogMode(sysinfo.LrConfig().DebugMode)
 	DbObj = db
 	if err != nil {
 		logger.Error("The system could not continue to run because it could not establish a connection with the database", err)

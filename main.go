@@ -16,6 +16,13 @@ func main() {
 func startUp() {
 	logger.Info("Start the lemon-robot startup process")
 	lemonrobot.PrintInfo(sysinfo.AppName(), sysinfo.AppVersion())
+
+	if sysinfo.LrConfig().DebugMode {
+		gin.SetMode(gin.DebugMode)
+	} else {
+		gin.SetMode(gin.ReleaseMode)
+	}
+
 	db.InitDb()
 
 	engine := gin.Default()
