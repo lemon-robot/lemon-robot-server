@@ -6,17 +6,17 @@ import (
 )
 
 func Success(ctx *gin.Context, data interface{}) {
-	ctx.JSON(200, model.HttpResponse{
-		Success: true,
-		Code:    "",
-		Data:    data,
-	})
+	Response(ctx, true, "", data)
 }
 
 func Failed(ctx *gin.Context, code string) {
+	Response(ctx, false, code, nil)
+}
+
+func Response(ctx *gin.Context, success bool, code string, data interface{}) {
 	ctx.JSON(200, model.HttpResponse{
-		Success: false,
+		Success: success,
 		Code:    code,
-		Data:    nil,
+		Data:    data,
 	})
 }
