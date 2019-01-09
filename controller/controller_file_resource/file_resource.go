@@ -2,29 +2,30 @@ package controller_file_resource
 
 import (
 	"github.com/gin-gonic/gin"
-	"lemon-robot-server/controller/http_response"
+	"lemon-robot-server/controller/http_common"
 	"lemon-robot-server/service/service_file_resource"
 )
 
 const urlPrefix = "/file_resource"
 const formFileKey = "file"
+const headerFileResourceKeyField = "File_resource_key"
 
-func RegApis(engine *gin.Engine) {
-	engine.POST(urlPrefix, generateFileResourceKey)
-	engine.PUT(urlPrefix, uploadFileResource)
+func RegApis(router *gin.RouterGroup) {
+	router.POST(urlPrefix, generateFileResourceKey)
+	router.PUT(urlPrefix, uploadFileResource)
 }
 
 func generateFileResourceKey(ctx *gin.Context) {
-	http_response.Success(ctx, service_file_resource.GenerateFileResourceKey())
+	http_common.Success(ctx, service_file_resource.GenerateFileResourceKey())
 }
 
 func uploadFileResource(ctx *gin.Context) {
 	file, fileHeader, err := ctx.Request.FormFile(formFileKey)
 	if err != nil {
-		http_response.Failed(ctx, http_response.ErrCode_FileResource_AnalysisFailed)
+		http_common.Failed(ctx, http_common.ErrCode_FileResource_AnalysisFailed)
 	} else {
-		fileResourceKey := ctx.Request.Header["File_resource_key"][0]
+		fileResourceKey := ctx.Request.Header[headerFileResourceKeyField][0]
 		success, code := service_file_resource.UploadFileResource(file, fileHeader, fileResourceKey)
-		http_response.Response(ctx, success, code, nil)
+		http_common.Response(ctx, success, code, nil)
 	}
 }

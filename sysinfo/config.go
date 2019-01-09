@@ -44,3 +44,7 @@ func defaultConfig() model.LrConfig {
 func GetWorkspaceSubPath(dirName string) string {
 	return path.Join(LrConfig().WorkSpacePath, dirName)
 }
+
+func GetHmacKeyBytes() []byte {
+	return []byte(LrConfig().SecretHmacKeyword)
+}

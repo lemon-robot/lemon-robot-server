@@ -1,9 +1,12 @@
-package http_response
+package http_common
 
 import (
 	"github.com/gin-gonic/gin"
 	"lemon-robot-golang-commons/model"
 )
+
+const BaseUrlPathPrefixFree = "/free"
+const BaseUrlPathPrefixMonigor = "/monitor"
 
 func Success(ctx *gin.Context, data interface{}) {
 	Response(ctx, true, "", data)

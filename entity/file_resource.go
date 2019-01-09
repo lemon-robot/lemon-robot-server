@@ -12,5 +12,5 @@ type FileResource struct {
 	OriginalFileName string `gorm:"size:512" json:"original_file_name"`
 	FileExtension    string `gorm:"size:512" json:"file_extension"`
 	FileSize         int64  `json:"file_size"`
-	ContentType      string `json:"content_type"`
+	ContentType      string `gorm:"size:128" json:"content_type"`
 }

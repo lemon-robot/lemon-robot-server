@@ -4,7 +4,7 @@ import (
 	"lemon-robot-golang-commons/logger"
 	"lemon-robot-golang-commons/utils/lruio"
 	"lemon-robot-golang-commons/utils/lrustring"
-	"lemon-robot-server/controller/http_response"
+	"lemon-robot-server/controller/http_common"
 	"lemon-robot-server/db"
 	"lemon-robot-server/entity"
 	"lemon-robot-server/sysinfo"
@@ -29,7 +29,7 @@ func UploadFileResource(file multipart.File, fileHeader *multipart.FileHeader, f
 	fileResourceObj := entity.FileResource{}
 	db.Db().First(&fileResourceObj, &entity.FileResource{FileResourceKey: fileResourceKey})
 	if fileResourceObj.ID == 0 {
-		return false, http_response.ErrCode_FileResource_KeyInvalid
+		return false, http_common.ErrCode_FileResource_KeyInvalid
 	}
 	fileResourceObj.FileExtension = path.Ext(fileHeader.Filename)
 	fileResourceObj.OriginalFileName = fileHeader.Filename
@@ -40,7 +40,7 @@ func UploadFileResource(file multipart.File, fileHeader *multipart.FileHeader, f
 	copyErr := lruio.CopyFileFromReader(file, sysinfo.GetWorkspaceSubPath(fileResourceFolderPrefix+fileResourceKey))
 	if copyErr != nil {
 		logger.Error("Handling user upload file_resource, error occurs when copying file", copyErr)
-		return false, http_response.ErrCode_Common_ServerInternalError
+		return false, http_common.ErrCode_Common_ServerInternalError
 	}
 	return true, ""
 }
