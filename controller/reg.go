@@ -1,13 +1,14 @@
 package controller
 
 import (
-	"fmt"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"lemon-robot-golang-commons/logger"
 	"lemon-robot-golang-commons/model"
 	"lemon-robot-server/controller/controller_auth"
 	"lemon-robot-server/controller/controller_file_resource"
 	"lemon-robot-server/controller/http_common"
+	"lemon-robot-server/sysinfo"
 	"net/http"
 	"strings"
 )
@@ -45,7 +46,16 @@ func responseAuthError(ctx *gin.Context) {
 }
 
 func checkAuthToken(ctx *gin.Context) bool {
-	token := strings.Split(ctx.Request.Header["Authorization"][0], " ")[1]
-	fmt.Println("授权token: " + token)
-	return true
+	jwtTokenStr := strings.Split(ctx.Request.Header["Authorization"][0], " ")[1]
+	jwtToken, err := jwt.Parse(jwtTokenStr, func(token *jwt.Token) (i interface{}, e error) {
+		return sysinfo.GetHmacKeyBytes(), nil
+	})
+	if err != nil {
+		return false
+	}
+	if _, ok := jwtToken.Claims.(jwt.MapClaims); ok && jwtToken.Valid {
+		return true
+	} else {
+		return false
+	}
 }

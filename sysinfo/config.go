@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 )
 
-var lrConfigObj = model.LrConfig{}
+var lrConfigObj = &model.LrConfig{}
 
 func configFilePath() string {
 	dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
@@ -20,7 +20,7 @@ func checkConfigExisted() bool {
 	return lruio.PathExists(configFilePath())
 }
 
-func LrConfig() model.LrConfig {
+func LrConfig() *model.LrConfig {
 	if checkConfigExisted() {
 		err := lruio.JsonToStruct(configFilePath(), &lrConfigObj)
 		if err != nil {
@@ -33,8 +33,8 @@ func LrConfig() model.LrConfig {
 	return defaultConfig()
 }
 
-func defaultConfig() model.LrConfig {
-	return model.LrConfig{
+func defaultConfig() *model.LrConfig {
+	return &model.LrConfig{
 		DbType:        "",
 		DbUrl:         "",
 		WorkSpacePath: "",

@@ -47,6 +47,18 @@
 			"versionExact": "v1.3.0"
 		},
 		{
+			"checksumSHA1": "xcCxAIEAcFtt1ISVVvUE+Ig6psk=",
+			"path": "github.com/go-gitea/go-sdk",
+			"revision": "d5a42771e7e851e8a89c5c6ffa0f5b075342f9df",
+			"revisionTime": "2019-01-27T11:35:53Z"
+		},
+		{
+			"checksumSHA1": "c+qlXgkOSup6UrqtA7bWi5yi6zY=",
+			"path": "github.com/go-gitea/go-sdk/gitea",
+			"revision": "d5a42771e7e851e8a89c5c6ffa0f5b075342f9df",
+			"revisionTime": "2019-01-27T11:35:53Z"
+		},
+		{
 			"checksumSHA1": "wmiJbuFVCxg22zwXIeLsVCudyeY=",
 			"path": "github.com/go-sql-driver/mysql",
 			"revision": "c45f530f8e7fe40f4687eaa50d0c8c5f1b66f9e0",
