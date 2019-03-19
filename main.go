@@ -7,7 +7,7 @@ import (
 	"lemon-robot-server/controller"
 	"lemon-robot-server/core/git"
 	"lemon-robot-server/db"
-	"lemon-robot-server/service/service_lrc"
+	"lemon-robot-server/service/service_lr_user"
 	"lemon-robot-server/sysinfo"
 	"os"
 )
@@ -46,5 +46,5 @@ func startUp() {
 }
 
 func SysSelfRepair() {
-	service_lrc.SelfRepair()
+	service_lr_user.SelfRepair()
 }

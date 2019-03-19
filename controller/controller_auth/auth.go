@@ -6,10 +6,10 @@ import (
 )
 
 const urlPrefix = "/auth"
-const urlLrc = "/lrc"
+const urlLrc = "/lr_user"
 
 func RegApis(router *gin.RouterGroup) {
-	router.POST(http_common.BaseUrlPathPrefixFree+urlPrefix+urlLrc, authLrc)
+	router.POST(http_common.BaseUrlPathPrefixFree+urlPrefix+urlLrc, authLrUser)
 
-	router.PUT(urlPrefix+urlLrc, generateLrc)
+	router.PUT(urlPrefix+urlLrc, createLrUser)
 }

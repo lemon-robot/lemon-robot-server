@@ -30,7 +30,7 @@ func InitDb() *gorm.DB {
 }
 
 func updateDb() {
-	DbObj.AutoMigrate(entity.Lrc{}, entity.FileResource{})
+	DbObj.AutoMigrate(entity.LrUser{}, entity.FileResource{})
 }
 
 func Db() *gorm.DB {
