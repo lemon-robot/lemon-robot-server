@@ -11,15 +11,15 @@ const formFileKey = "file"
 const headerFileResourceKeyField = "File_resource_key"
 
 func RegApis(router *gin.RouterGroup) {
-	router.POST(urlPrefix, generateFileResourceKey)
-	router.PUT(urlPrefix, uploadFileResource)
+	router.POST(urlPrefix, create)
+	router.PUT(urlPrefix, upload)
 }
 
-func generateFileResourceKey(ctx *gin.Context) {
+func create(ctx *gin.Context) {
 	http_common.Success(ctx, service_file_resource.GenerateFileResourceKey())
 }
 
-func uploadFileResource(ctx *gin.Context) {
+func upload(ctx *gin.Context) {
 	file, fileHeader, err := ctx.Request.FormFile(formFileKey)
 	if err != nil {
 		http_common.Failed(ctx, http_common.ErrCode_FileResource_AnalysisFailed)

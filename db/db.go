@@ -15,6 +15,10 @@ import (
 var DbObj *gorm.DB
 
 func InitDb() *gorm.DB {
+	// set table name rule
+	gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
+		return sysinfo.LrConfig().DbTablePrefix + defaultTableName
+	}
 	logger.Info("The system started trying to connect to the database.")
 	db, err := gorm.Open(sysinfo.LrConfig().DbType, sysinfo.LrConfig().DbUrl)
 	// if enabled debug mode, show gorm log
@@ -30,7 +34,11 @@ func InitDb() *gorm.DB {
 }
 
 func updateDb() {
-	DbObj.AutoMigrate(entity.LrUser{}, entity.FileResource{})
+	DbObj.AutoMigrate(
+		entity.User{},
+		entity.Namespace{},
+		entity.Task{},
+		entity.FileResource{})
 }
 
 func Db() *gorm.DB {

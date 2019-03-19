@@ -28,7 +28,7 @@ func GenerateFileResourceKey() string {
 func UploadFileResource(file multipart.File, fileHeader *multipart.FileHeader, fileResourceKey string) (success bool, errCode string) {
 	fileResourceObj := entity.FileResource{}
 	db.Db().First(&fileResourceObj, &entity.FileResource{FileResourceKey: fileResourceKey})
-	if fileResourceObj.ID == 0 {
+	if fileResourceObj.FileResourceKey == "" {
 		return false, http_common.ErrCode_FileResource_KeyInvalid
 	}
 	fileResourceObj.FileExtension = path.Ext(fileHeader.Filename)

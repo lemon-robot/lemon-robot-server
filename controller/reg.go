@@ -5,9 +5,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"lemon-robot-golang-commons/logger"
 	"lemon-robot-golang-commons/model"
-	"lemon-robot-server/controller/controller_auth"
 	"lemon-robot-server/controller/controller_file_resource"
+	"lemon-robot-server/controller/controller_task"
+	"lemon-robot-server/controller/controller_user"
 	"lemon-robot-server/controller/http_common"
+	"lemon-robot-server/dao/dao_user"
+	"lemon-robot-server/entity"
 	"lemon-robot-server/sysinfo"
 	"net/http"
 	"strings"
@@ -17,13 +20,14 @@ func RegAllApis(engine *gin.Engine) {
 	authRouter := engine.Group("/", checkAuthHandler())
 
 	controller_file_resource.RegApis(authRouter)
-	controller_auth.RegApis(authRouter)
+	controller_user.RegApis(authRouter)
+	controller_task.RegApis(authRouter)
 }
 
 func checkAuthHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		reqUrlPath := ctx.Request.URL.Path
-		if strings.Index(reqUrlPath, http_common.BaseUrlPathPrefixFree) == 0 {
+		if checkIsLoginUrl(reqUrlPath) {
 			logger.Debug("The free interface received a network request: " + reqUrlPath)
 			ctx.Next()
 		} else {
@@ -34,6 +38,10 @@ func checkAuthHandler() gin.HandlerFunc {
 			}
 		}
 	}
+}
+
+func checkIsLoginUrl(reqUrlPath string) bool {
+	return reqUrlPath == "/user/login"
 }
 
 func responseAuthError(ctx *gin.Context) {
@@ -50,7 +58,10 @@ func checkAuthToken(ctx *gin.Context) bool {
 	jwtToken, err := jwt.Parse(jwtTokenStr, func(token *jwt.Token) (i interface{}, e error) {
 		return sysinfo.GetHmacKeyBytes(), nil
 	})
-	if err != nil {
+	userKey := jwtToken.Claims.(jwt.MapClaims)["iss"]
+	user := dao_user.FirstByExample(entity.User{UserKey: userKey.(string)})
+	// user not found or have error
+	if user.UserKey == "" || err != nil {
 		return false
 	}
 	if _, ok := jwtToken.Claims.(jwt.MapClaims); ok && jwtToken.Valid {

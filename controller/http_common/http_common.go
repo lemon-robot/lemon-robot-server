@@ -6,9 +6,6 @@ import (
 	"lemon-robot-golang-commons/model"
 )
 
-const BaseUrlPathPrefixFree = "/free"
-const BaseUrlPathPrefixMonigor = "/monitor"
-
 func Success(ctx *gin.Context, data interface{}) {
 	Response(ctx, true, "", data)
 }

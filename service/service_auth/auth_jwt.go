@@ -8,20 +8,20 @@ import (
 	"time"
 )
 
-func GenerateJwtTokenStr(lrct string) string {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, generateJwtPayload(lrct))
+func GenerateJwtTokenStr(userKey string) string {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, generateJwtPayload(userKey))
 	tokenString, _ := token.SignedString(sysinfo.GetHmacKeyBytes())
 	return tokenString
 }
 
-func generateJwtPayload(lrct string) model.LrJwtPayload {
+func generateJwtPayload(userKey string) model.LrJwtPayload {
 	return model.LrJwtPayload{
 		Id:        lrustring.Uuid(),
-		Issuer:    lrct,
+		Issuer:    userKey,
 		IssuedAt:  time.Now().Unix(),
 		NotBefore: time.Now().Unix(),
 		ExpiresAt: time.Now().Add(time.Hour).Unix(),
-		Audience:  lrct,
+		Audience:  userKey,
 		Subject:   sysinfo.AppName(),
 	}
 }

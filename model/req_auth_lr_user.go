@@ -1,6 +1,6 @@
 package model
 
-type ReqAuthLrUser struct {
+type ReqAuthUser struct {
 	Number   string `json:"number"`
 	Password string `json:"password"`
 }
