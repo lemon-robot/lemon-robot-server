@@ -59,7 +59,7 @@ func checkAuthToken(ctx *gin.Context) bool {
 		return sysinfo.GetHmacKeyBytes(), nil
 	})
 	userKey := jwtToken.Claims.(jwt.MapClaims)["iss"]
-	user := dao_user.FirstByExample(entity.User{UserKey: userKey.(string)})
+	user := dao_user.FirstByExample(&entity.User{UserKey: userKey.(string)})
 	// user not found or have error
 	if user.UserKey == "" || err != nil {
 		return false

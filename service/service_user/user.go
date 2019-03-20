@@ -8,6 +8,7 @@ import (
 	"io"
 	"lemon-robot-golang-commons/logger"
 	"lemon-robot-golang-commons/utils/lrustring"
+	"lemon-robot-server/dao/dao_user"
 	"lemon-robot-server/db"
 	"lemon-robot-server/entity"
 	"lemon-robot-server/sysinfo"
@@ -20,23 +21,16 @@ func CreateUser(number, password string) (error, entity.User) {
 	userEntity.UserKey = lrustring.Uuid()
 	userEntity.UserNumber = number
 	userEntity.PasswordSecret = CalculatePasswordSecret(password)
-	db := db.Db().Create(&userEntity)
-	return db.Error, userEntity
+	result := db.Db().Create(&userEntity)
+	return result.Error, userEntity
 }
 
 func CheckUser(number, password string) (bool, entity.User) {
-	userEntity := entity.User{}
-	db.Db().First(&userEntity, &entity.User{UserNumber: number})
+	userEntity := dao_user.FirstByExample(&entity.User{UserNumber: number})
 	if userEntity.UserKey == "" {
 		return false, userEntity
 	}
 	return userEntity.PasswordSecret == CalculatePasswordSecret(password), userEntity
-}
-
-func CountByUserExample(user entity.User) int {
-	var count int
-	db.Db().Model(&entity.User{}).Where(user).Count(&count)
-	return count
 }
 
 func CalculatePasswordSecret(password string) string {
@@ -44,7 +38,10 @@ func CalculatePasswordSecret(password string) string {
 		HashObj = hmac.New(sha256.New, sysinfo.GetHmacKeyBytes())
 	}
 	HashObj.Reset()
-	io.WriteString(HashObj, password)
+	_, err := io.WriteString(HashObj, password)
+	if err != nil {
+		logger.Error("Error when calculate password secret", err)
+	}
 	return fmt.Sprintf("%x", HashObj.Sum(nil))
 }
 
@@ -58,7 +55,11 @@ func SelfRepair() {
 	if count == 0 {
 		numberNew := "lemonrobot"
 		passwordNew := lrustring.Uuid()
-		CreateUser(numberNew, passwordNew)
+		err, _ := CreateUser(numberNew, passwordNew)
+		if err != nil {
+			logger.Error("Error repair User, Can not create user", err)
+			return
+		}
 		logger.Warn("There are no users in the system. Now the system will automatically generate a user.")
 		logger.Warn("Number: " + numberNew)
 		logger.Warn("Password: " + passwordNew)

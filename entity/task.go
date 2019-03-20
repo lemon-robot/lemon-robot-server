@@ -3,7 +3,6 @@ package entity
 import "time"
 
 type Task struct {
-	LrEntity
 	TaskKey            string    `gorm:"primary_key;size:64" json:"task_key"`
 	BelongNamespace    Namespace `gorm:"ForeignKey:BelongNamespaceKey;AssociationForeignKey:NamespaceKey" json:"belong_namespace"`
 	BelongNamespaceKey string    `json:"belong_namespace_key"`

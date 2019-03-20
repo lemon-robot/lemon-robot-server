@@ -3,7 +3,6 @@ package entity
 import "time"
 
 type FileResource struct {
-	LrEntity
 	FileResourceKey  string `gorm:"primary_key;size:64" json:"file_resource_key"`
 	UsedTag          bool   `json:"used_tag"`
 	UploadedTag      bool   `json:"uploaded_tag"`

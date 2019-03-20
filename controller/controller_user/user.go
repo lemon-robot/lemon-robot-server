@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"lemon-robot-server/controller/http_common"
+	"lemon-robot-server/dao/dao_user"
 	"lemon-robot-server/entity"
 	"lemon-robot-server/model"
 	"lemon-robot-server/service/service_auth"
@@ -34,7 +35,7 @@ func login(ctx *gin.Context) {
 func create(ctx *gin.Context) {
 	createUserReq := model.ReqUserCreate{}
 	http_common.DealError(ctx, ctx.Bind(&createUserReq), "", func(ctx *gin.Context) {
-		count := service_user.CountByUserExample(entity.User{UserNumber: createUserReq.Number})
+		count := dao_user.CountByUserExample(&entity.User{UserNumber: createUserReq.Number})
 		fmt.Println(count)
 		if count > 0 {
 			http_common.Failed(ctx, http_common.ErrCode_User_CreateFailedNumberAlreadyExists)

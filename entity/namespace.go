@@ -3,7 +3,6 @@ package entity
 import "time"
 
 type Namespace struct {
-	LrEntity
 	NamespaceKey       string `gorm:"primary_key;size:64" json:"namespace_key"`
 	NamespaceTag       string `gorm:"index;size:64" json:"namespace_tag"`
 	NamespaceName      string `gorm:"size:64" json:"namespace_name"`

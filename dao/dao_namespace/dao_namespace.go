@@ -6,17 +6,17 @@ import (
 	"lemon-robot-server/entity"
 )
 
-func Save(entity *entity.User) *gorm.DB {
+func Save(entity *entity.Namespace) *gorm.DB {
 	return db.Db().Save(entity)
 }
 
-func FirstByExample(example *entity.User) entity.User {
-	result := entity.User{}
+func FirstByExample(example *entity.Namespace) entity.Namespace {
+	result := entity.Namespace{}
 	db.Db().First(&result, example)
 	return result
 }
 
-func CountByUserExample(example *entity.User) int {
+func CountByUserExample(example *entity.Namespace) int {
 	var count int
 	db.Db().Model(&entity.User{}).Where(example).Count(&count)
 	return count
