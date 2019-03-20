@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"lemon-robot-server/controller/http_common"
 	"lemon-robot-server/dao/dao_user"
+	"lemon-robot-server/define/http_error_code_define"
 	"lemon-robot-server/entity"
 	"lemon-robot-server/model"
 	"lemon-robot-server/service/service_auth"
@@ -27,7 +28,7 @@ func login(ctx *gin.Context) {
 		if result {
 			http_common.Success(ctx, service_auth.GenerateJwtTokenStr(userEntity.UserKey))
 		} else {
-			http_common.Failed(ctx, http_common.ErrCode_User_LoginIdentityInfoVerifyFailed)
+			http_common.Failed(ctx, http_error_code_define.User_LoginIdentityInfoVerifyFailed)
 		}
 	})
 }
@@ -38,7 +39,7 @@ func create(ctx *gin.Context) {
 		count := dao_user.CountByUserExample(&entity.User{UserNumber: createUserReq.Number})
 		fmt.Println(count)
 		if count > 0 {
-			http_common.Failed(ctx, http_common.ErrCode_User_CreateFailedNumberAlreadyExists)
+			http_common.Failed(ctx, http_error_code_define.User_CreateFailedNumberAlreadyExists)
 			return
 		}
 		err, _ := service_user.CreateUser(createUserReq.Number, createUserReq.Password)

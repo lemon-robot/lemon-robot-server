@@ -35,10 +35,13 @@ func InitDb() *gorm.DB {
 
 func updateDb() {
 	DbObj.AutoMigrate(
-		entity.User{},
+		entity.Config{},
+		entity.FileResource{},
 		entity.Namespace{},
+		entity.ParamFileDefine{},
+		entity.ParamValueDefine{},
 		entity.Task{},
-		entity.FileResource{})
+		entity.User{})
 }
 
 func Db() *gorm.DB {

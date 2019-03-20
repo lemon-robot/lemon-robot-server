@@ -17,10 +17,10 @@ import (
 var HashObj hash.Hash
 
 func CreateUser(number, password string) (error, entity.User) {
-	userEntity := entity.User{}
-	userEntity.UserKey = lrustring.Uuid()
-	userEntity.UserNumber = number
-	userEntity.PasswordSecret = CalculatePasswordSecret(password)
+	userEntity := entity.User{
+		UserKey:        lrustring.Uuid(),
+		PasswordSecret: CalculatePasswordSecret(password),
+		UserNumber:     number}
 	result := db.Db().Create(&userEntity)
 	return result.Error, userEntity
 }

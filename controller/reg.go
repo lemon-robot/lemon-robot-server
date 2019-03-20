@@ -8,8 +8,8 @@ import (
 	"lemon-robot-server/controller/controller_file_resource"
 	"lemon-robot-server/controller/controller_task"
 	"lemon-robot-server/controller/controller_user"
-	"lemon-robot-server/controller/http_common"
 	"lemon-robot-server/dao/dao_user"
+	"lemon-robot-server/define/http_error_code_define"
 	"lemon-robot-server/entity"
 	"lemon-robot-server/sysinfo"
 	"net/http"
@@ -47,7 +47,7 @@ func checkIsLoginUrl(reqUrlPath string) bool {
 func responseAuthError(ctx *gin.Context) {
 	ctx.JSON(http.StatusUnauthorized, model.HttpResponse{
 		Success: false,
-		Code:    http_common.ErrCode_Common_Unauthorized,
+		Code:    http_error_code_define.Common_Unauthorized,
 		Data:    nil,
 	})
 	ctx.Abort()
