@@ -36,7 +36,7 @@ func InitDb() *gorm.DB {
 func updateDb() {
 	DbObj.AutoMigrate(
 		entity.Config{},
-		entity.DispatcherInstance{},
+		entity.DispatcherMachine{},
 		entity.FileResource{},
 		entity.Namespace{},
 		entity.ParamFileDefine{},

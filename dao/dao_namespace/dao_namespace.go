@@ -1,4 +1,4 @@
-package dao_user
+package dao_namespace
 
 import (
 	"github.com/jinzhu/gorm"

@@ -6,12 +6,11 @@ import (
 )
 
 const urlPrefix = "/dispatcher"
-const urlPing = "/ping"
 
 func RegApis(router *gin.RouterGroup) {
-	router.POST(urlPrefix+urlPing, ping)
+	router.POST(urlPrefix, register)
 }
 
-func ping(ctx *gin.Context) {
+func register(ctx *gin.Context) {
 	http_common.Success(ctx, "pong")
 }

@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"lemon-robot-golang-commons/logger"
 	"lemon-robot-golang-commons/model"
@@ -9,10 +8,8 @@ import (
 	"lemon-robot-server/controller/controller_file_resource"
 	"lemon-robot-server/controller/controller_task"
 	"lemon-robot-server/controller/controller_user"
-	"lemon-robot-server/dao/dao_user"
 	"lemon-robot-server/define/http_error_code_define"
-	"lemon-robot-server/entity"
-	"lemon-robot-server/sysinfo"
+	"lemon-robot-server/service/service_auth"
 	"net/http"
 	"strings"
 )
@@ -56,18 +53,5 @@ func responseAuthError(ctx *gin.Context) {
 
 func checkAuthToken(ctx *gin.Context) bool {
 	jwtTokenStr := strings.Split(ctx.Request.Header["Authorization"][0], " ")[1]
-	jwtToken, err := jwt.Parse(jwtTokenStr, func(token *jwt.Token) (i interface{}, e error) {
-		return sysinfo.GetHmacKeyBytes(), nil
-	})
-	userKey := jwtToken.Claims.(jwt.MapClaims)["iss"]
-	user := dao_user.FirstByExample(&entity.User{UserKey: userKey.(string)})
-	// user not found or have error
-	if user.UserKey == "" || err != nil {
-		return false
-	}
-	if _, ok := jwtToken.Claims.(jwt.MapClaims); ok && jwtToken.Valid {
-		return true
-	} else {
-		return false
-	}
+	return service_auth.CheckToken(jwtTokenStr)
 }

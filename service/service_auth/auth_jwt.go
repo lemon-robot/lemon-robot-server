@@ -3,6 +3,8 @@ package service_auth
 import (
 	"github.com/dgrijalva/jwt-go"
 	"lemon-robot-golang-commons/utils/lrustring"
+	"lemon-robot-server/dao/dao_user"
+	"lemon-robot-server/entity"
 	"lemon-robot-server/model"
 	"lemon-robot-server/sysinfo"
 	"time"
@@ -23,5 +25,25 @@ func generateJwtPayload(userKey string) model.LrJwtPayload {
 		ExpiresAt: time.Now().Add(time.Hour).Unix(),
 		Audience:  userKey,
 		Subject:   sysinfo.AppName(),
+	}
+}
+
+func CheckToken(jwtTokenStr string) bool {
+	jwtToken, err := jwt.Parse(jwtTokenStr, func(token *jwt.Token) (i interface{}, e error) {
+		return sysinfo.GetHmacKeyBytes(), nil
+	})
+	if jwtToken == nil {
+		return false
+	}
+	userKey := jwtToken.Claims.(jwt.MapClaims)["iss"]
+	user := dao_user.FirstByExample(&entity.User{UserKey: userKey.(string)})
+	// user not found or have error
+	if user.UserKey == "" || err != nil {
+		return false
+	}
+	if _, ok := jwtToken.Claims.(jwt.MapClaims); ok && jwtToken.Valid {
+		return true
+	} else {
+		return false
 	}
 }
