@@ -18,6 +18,6 @@ func FirstByExample(example *entity.Namespace) entity.Namespace {
 
 func CountByUserExample(example *entity.Namespace) int {
 	var count int
-	db.Db().Model(&entity.User{}).Where(example).Count(&count)
+	db.Db().Model(&entity.Namespace{}).Where(example).Count(&count)
 	return count
 }

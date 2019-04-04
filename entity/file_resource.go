@@ -9,6 +9,7 @@ type FileResource struct {
 	OriginalFileName string `gorm:"size:512" json:"original_file_name"`
 	FileExtension    string `gorm:"size:512" json:"file_extension"`
 	FileSize         int64  `json:"file_size"`
+	FileContent      []byte `gorm:"size:2048000" json:"file_content"`
 	ContentType      string `gorm:"size:128" json:"content_type"`
 	CreatedAt        time.Time
 	UpdatedAt        time.Time

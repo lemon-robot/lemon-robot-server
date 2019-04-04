@@ -5,5 +5,5 @@ import (
 )
 
 func Serve(engine *gin.Engine) {
-	engine.GET("/ws/:os/:arch/:dispatcherVersion/:token", ConnectHandler)
+	engine.GET("/ws/:os/:arch/:dispatcherVersion/:machineCode/:token", ConnectHandler)
 }

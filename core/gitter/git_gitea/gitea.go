@@ -17,26 +17,26 @@ func (gitter *GitGitea) Init(config map[string]string) {
 	gitter.client = gitea.NewClient(endpoint, config["token"])
 	_, err := gitter.client.ListMyRepos()
 	if err != nil {
-		logger.Error("Error connecting gitter server["+endpoint+"]", err)
+		logger.Error("Error connecting git server["+endpoint+"]", err)
 		os.Exit(1)
 	}
 	currentUser, err := gitter.client.GetMyUserInfo()
 	if err != nil {
-		logger.Error("Read current gitter user info error", err)
+		logger.Error("Read current git user info error", err)
 	}
 	gitter.gitCurrentUser = currentUser
-	logger.Info("Successful connection to gitter server: " + endpoint + ", user as: " + gitter.gitCurrentUser.UserName)
+	logger.Info("Successful connection to git server: " + endpoint + ", user as: " + gitter.gitCurrentUser.UserName)
 }
 
 func (gitter *GitGitea) TaskCreate(task *entity.Task) error {
 	_, orgErr := gitter.client.GetOrg(task.BelongNamespace.NamespaceTag)
 	if orgErr != nil {
-		logger.Error("Get gitter org error", orgErr)
+		logger.Error("Get git org error", orgErr)
 		_, createOrgErr := gitter.client.AdminCreateOrg(gitter.gitCurrentUser.UserName, gitea.CreateOrgOption{
 			UserName: task.BelongNamespace.NamespaceTag,
 		})
 		if createOrgErr != nil {
-			logger.Error("Create gitter org error", createOrgErr)
+			logger.Error("Create git org error", createOrgErr)
 		}
 	}
 	_, repoErr := gitter.client.CreateOrgRepo(task.BelongNamespace.NamespaceTag, gitea.CreateRepoOption{
@@ -44,7 +44,7 @@ func (gitter *GitGitea) TaskCreate(task *entity.Task) error {
 		Private: true,
 	})
 	if repoErr != nil {
-		logger.Error("Create gitter repo error", repoErr)
+		logger.Error("Create git repo error", repoErr)
 	}
 	return repoErr
 }

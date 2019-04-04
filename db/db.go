@@ -37,10 +37,13 @@ func updateDb() {
 	DbObj.AutoMigrate(
 		entity.Config{},
 		entity.DispatcherMachine{},
+		entity.DispatcherOnline{},
+		entity.DispatcherTag{},
 		entity.FileResource{},
 		entity.Namespace{},
 		entity.ParamFileDefine{},
 		entity.ParamValueDefine{},
+		entity.ServerNode{},
 		entity.Task{},
 		entity.User{})
 }

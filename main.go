@@ -8,6 +8,7 @@ import (
 	"lemon-robot-server/core/gitter"
 	"lemon-robot-server/core/websocket"
 	"lemon-robot-server/db"
+	"lemon-robot-server/service/service_server_node"
 	"lemon-robot-server/service/service_user"
 	"lemon-robot-server/sysinfo"
 	"os"
@@ -29,6 +30,7 @@ func startUp() {
 
 	db.InitDb()
 	SysSelfRepair()
+	service_server_node.RegisterServerNode()
 
 	engine := gin.Default()
 	// start rest api
@@ -37,10 +39,10 @@ func startUp() {
 	websocket.Serve(engine)
 
 	if _, ok := gitter.SupportedTypes()[sysinfo.LrConfig().GitType]; !ok {
-		logger.Error("This type of gitter server ["+sysinfo.LrConfig().GitType+"] is not supported", nil)
+		logger.Error("This type of git server ["+sysinfo.LrConfig().GitType+"] is not supported", nil)
 		os.Exit(1)
 	}
-	logger.Info("Start trying to establish a connection to gitter server, gitter server type: " + sysinfo.LrConfig().GitType)
+	logger.Info("Start trying to establish a connection to git server, git server type: " + sysinfo.LrConfig().GitType)
 	gitter.ConfigIns(sysinfo.LrConfig().GitType, sysinfo.LrConfig().GitConfig)
 
 	// git clone test
