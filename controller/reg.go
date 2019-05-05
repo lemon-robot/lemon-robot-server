@@ -15,11 +15,28 @@ import (
 )
 
 func RegAllApis(engine *gin.Engine) {
+	engine.Use(cors())
 	authRouter := engine.Group("/", checkAuthHandler())
 	controller_file_resource.RegApis(authRouter)
 	controller_user.RegApis(authRouter)
 	controller_task.RegApis(authRouter)
 	controller_dispatcher.RegApis(authRouter)
+}
+
+func cors() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		method := c.Request.Method
+
+		c.Header("Access-Control-Allow-Origin", "*")
+		c.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization, Token")
+		c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+		c.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type")
+		c.Header("Access-Control-Allow-Credentials", "true")
+		if method == "OPTIONS" {
+			c.AbortWithStatus(http.StatusNoContent)
+		}
+		c.Next()
+	}
 }
 
 func checkAuthHandler() gin.HandlerFunc {

@@ -9,6 +9,7 @@ import (
 	"lemon-robot-server/core/websocket"
 	"lemon-robot-server/db"
 	"lemon-robot-server/service/service_server_node"
+	"lemon-robot-server/service/service_timer"
 	"lemon-robot-server/service/service_user"
 	"lemon-robot-server/sysinfo"
 	"os"
@@ -30,6 +31,7 @@ func startUp() {
 
 	db.InitDb()
 	SysSelfRepair()
+	service_timer.StartAllTimer()
 	service_server_node.RegisterServerNode()
 
 	engine := gin.Default()
