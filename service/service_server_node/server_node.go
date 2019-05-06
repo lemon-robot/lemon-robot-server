@@ -3,7 +3,7 @@ package service_server_node
 import (
 	"fmt"
 	"lemon-robot-golang-commons/logger"
-	"lemon-robot-server/core/core_other"
+	lrumachine "lemon-robot-golang-commons/utils/machine"
 	"lemon-robot-server/dao/dao_dispatcher_online"
 	"lemon-robot-server/dao/dao_server_node"
 	"lemon-robot-server/dto"
@@ -18,7 +18,7 @@ var calculatedMachineSign string
 
 func GetCalculatedMachineSign() string {
 	if calculatedMachineSign == "" {
-		machineSign, mcErr := core_other.GetMachineSign()
+		machineSign, mcErr := lrumachine.GetMachineSign()
 		if mcErr != nil {
 			logger.Error("Server nodes cannot be registered because machine sign cannot be computed", mcErr)
 			os.Exit(1)
