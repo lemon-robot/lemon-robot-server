@@ -4,16 +4,15 @@ import (
 	"lemon-robot-golang-commons/logger"
 	"lemon-robot-golang-commons/utils/lruio"
 	"lemon-robot-server/model"
-	"os"
 	"path"
-	"path/filepath"
 )
 
 var lrConfigObj = &model.LrConfig{}
 
+const configFileName = "lemon.robot.json"
+
 func configFilePath() string {
-	dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
-	return filepath.Join(dir, "lemon.robot.json")
+	return lruio.GetRuntimePath(configFileName)
 }
 
 func checkConfigExisted() bool {

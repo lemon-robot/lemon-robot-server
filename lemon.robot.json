@@ -8,7 +8,6 @@
   "debug_mode": true,
   "secret_hmac_keyword": "lemon.robot.secret",
   "cluster_node_active_interval": 60,
-  "cluster_node_active_scan_interval": 90,
   "git_type": "gitea",
   "git_config": {
     "endpoint": "http://39.105.221.111:13000",

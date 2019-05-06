@@ -2,7 +2,7 @@ package service_server_node
 
 import (
 	"lemon-robot-golang-commons/logger"
-	"lemon-robot-golang-commons/utils/machine"
+	"lemon-robot-server/core/core_other"
 	"lemon-robot-server/dao/dao_dispatcher_online"
 	"lemon-robot-server/dao/dao_server_node"
 	"lemon-robot-server/entity"
@@ -15,34 +15,31 @@ import (
 var calculatedMachineCode string
 
 func GetCalculatedMachineCode() string {
+	if calculatedMachineCode == "" {
+		machineCode, mcErr := core_other.GetMachineSign()
+		if mcErr != nil {
+			logger.Error("Server nodes cannot be registered because machine code cannot be computed", mcErr)
+			os.Exit(1)
+		}
+		calculatedMachineCode = machineCode
+	}
 	return calculatedMachineCode
 }
 
 func RegisterServerNode() {
-	machineCode, mcErr := lrumachine.CalculateMachineCode()
-	if mcErr != nil {
-		logger.Error("Server nodes cannot be registered because machine code cannot be computed", mcErr)
-		os.Exit(1)
-	}
-	//DELETE FROM `lr_dispatcher_onlines`  WHERE (bind_server_machine_code = '537cc9f908067d8066b9129b7cc20499')
-	dao_dispatcher_online.Delete("bind_server_machine_code = ?", machineCode)
-	//db.Db().Where("bind_server_machine_code = ?", machineCode).Delete(&entity.DispatcherOnline{})
-	calculatedMachineCode = machineCode
+	dao_dispatcher_online.DeleteByClusterNodeMachineCode(GetCalculatedMachineCode())
 	now := time.Now()
-	dao_server_node.Save(&entity.ServerNode{
-		MachineCode:   machineCode,
+	nodeData := &entity.ServerNode{
+		MachineCode:   GetCalculatedMachineCode(),
 		CpuArch:       runtime.GOARCH,
 		OperateSystem: runtime.GOOS,
 		ServerVersion: sysinfo.AppVersion(),
 		StartAt:       now,
 		ActiveTime:    now,
-	})
-}
-
-func ClearNotActiveServerNodes() {
-
+	}
+	dao_server_node.Save(nodeData)
 }
 
 func RefreshActiveTime() {
-
+	dao_server_node.UpdateActiveTime(GetCalculatedMachineCode(), time.Now())
 }

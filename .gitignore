@@ -3,3 +3,4 @@
 vendor/*
 !vendor/vendor.json
 lemon_robot_server
+lr_workspace

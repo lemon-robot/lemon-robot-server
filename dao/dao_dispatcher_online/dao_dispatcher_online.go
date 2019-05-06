@@ -10,6 +10,10 @@ func Delete(query interface{}, where ...interface{}) {
 	db.Db().Where(query, where).Delete(&entity.DispatcherOnline{})
 }
 
+func DeleteByClusterNodeMachineCode(nodeMachineCode string) {
+	Delete("bind_server_machine_code = ?", nodeMachineCode)
+}
+
 func Save(entity *entity.DispatcherOnline) *gorm.DB {
 	return db.Db().Save(entity)
 }
