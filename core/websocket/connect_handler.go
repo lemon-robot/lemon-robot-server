@@ -38,9 +38,9 @@ func ConnectHandler(context *gin.Context) {
 		os := context.Param("os")
 		arch := context.Param("arch")
 		dispatcherVersion := context.Param("dispatcherVersion")
-		machineCode := context.Param("machineCode")
+		machineSign := context.Param("machineSign")
 		machineEntity := entity.DispatcherMachine{
-			MachineCode:       machineCode,
+			MachineSign:       machineSign,
 			CpuArch:           arch,
 			OperateSystem:     os,
 			DispatcherVersion: dispatcherVersion,
@@ -50,12 +50,12 @@ func ConnectHandler(context *gin.Context) {
 			OnlineKey:                 onlineKey,
 			RelationDispatcherMachine: machineEntity,
 			IpAddress:                 context.ClientIP(),
-			BindServerMachineCode:     service_server_node.GetCalculatedMachineCode(),
+			BindServerMachineSign:     service_server_node.GetCalculatedMachineSign(),
 		})
 		logger.Info(
 			fmt.Sprintf(
-				"Websocket was successfully established! OS: %v, ARCH: %v, Dispatcher Ver: %v, Machine Code: %v",
-				os, arch, dispatcherVersion, machineCode))
+				"Websocket was successfully established! OS: %v, ARCH: %v, Dispatcher Ver: %v, Machine Sign: %v",
+				os, arch, dispatcherVersion, machineSign))
 	} else {
 		logger.Warn("An illegal websocket connection request has been rejected by the system. token: " + token)
 		return

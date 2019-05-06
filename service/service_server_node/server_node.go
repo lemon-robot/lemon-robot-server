@@ -1,10 +1,12 @@
 package service_server_node
 
 import (
+	"fmt"
 	"lemon-robot-golang-commons/logger"
 	"lemon-robot-server/core/core_other"
 	"lemon-robot-server/dao/dao_dispatcher_online"
 	"lemon-robot-server/dao/dao_server_node"
+	"lemon-robot-server/dto"
 	"lemon-robot-server/entity"
 	"lemon-robot-server/sysinfo"
 	"os"
@@ -12,25 +14,25 @@ import (
 	"time"
 )
 
-var calculatedMachineCode string
+var calculatedMachineSign string
 
-func GetCalculatedMachineCode() string {
-	if calculatedMachineCode == "" {
-		machineCode, mcErr := core_other.GetMachineSign()
+func GetCalculatedMachineSign() string {
+	if calculatedMachineSign == "" {
+		machineSign, mcErr := core_other.GetMachineSign()
 		if mcErr != nil {
-			logger.Error("Server nodes cannot be registered because machine code cannot be computed", mcErr)
+			logger.Error("Server nodes cannot be registered because machine sign cannot be computed", mcErr)
 			os.Exit(1)
 		}
-		calculatedMachineCode = machineCode
+		calculatedMachineSign = machineSign
 	}
-	return calculatedMachineCode
+	return calculatedMachineSign
 }
 
 func RegisterServerNode() {
-	dao_dispatcher_online.DeleteByClusterNodeMachineCode(GetCalculatedMachineCode())
+	dao_dispatcher_online.DeleteByClusterNodeMachineSign(GetCalculatedMachineSign())
 	now := time.Now()
 	nodeData := &entity.ServerNode{
-		MachineCode:   GetCalculatedMachineCode(),
+		MachineSign:   GetCalculatedMachineSign(),
 		CpuArch:       runtime.GOARCH,
 		OperateSystem: runtime.GOOS,
 		ServerVersion: sysinfo.AppVersion(),
@@ -41,5 +43,22 @@ func RegisterServerNode() {
 }
 
 func RefreshActiveTime() {
-	dao_server_node.UpdateActiveTime(GetCalculatedMachineCode(), time.Now())
+	dao_server_node.UpdateActiveTime(GetCalculatedMachineSign(), time.Now())
+}
+
+func UpdateAlias(machineSign, newAlias string) {
+	dao_server_node.UpdateAlias(machineSign, newAlias)
+}
+
+func QueryAllNodeInfo() []dto.ServerNodeResp {
+	serverNodes := dao_server_node.FindAllByExample(&entity.ServerNode{})
+	serverNodeInfoArr := make([]dto.ServerNodeResp, len(serverNodes))
+	dur, _ := time.ParseDuration(fmt.Sprintf("-%ds", sysinfo.LrConfig().ClusterNodeActiveInterval*2))
+	for index, item := range serverNodes {
+		serverNodeInfoArr[index] = dto.ServerNodeResp{
+			NodeInfo:    item,
+			ActiveState: item.ActiveTime.After(time.Now().Add(dur)),
+		}
+	}
+	return serverNodeInfoArr
 }

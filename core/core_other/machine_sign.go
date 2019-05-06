@@ -6,7 +6,7 @@ import (
 	"lemon-robot-golang-commons/utils/lruio"
 	"lemon-robot-golang-commons/utils/lrustring"
 	"lemon-robot-server/model"
-	"lemon-robot-server/utils/workspace_util"
+	"lemon-robot-server/subutiiils/workspace_util"
 )
 
 const machineSignSaveFile = "lr.msign"

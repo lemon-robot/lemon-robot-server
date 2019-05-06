@@ -1,6 +1,6 @@
-package model
+package dto
 
-type ReqAuthUser struct {
+type LrUserCreateReq struct {
 	Number   string `json:"number"`
 	Password string `json:"password"`
 }

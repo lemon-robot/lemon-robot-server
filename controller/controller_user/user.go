@@ -6,8 +6,8 @@ import (
 	"lemon-robot-server/controller/http_common"
 	"lemon-robot-server/dao/dao_user"
 	"lemon-robot-server/define/http_error_code_define"
+	"lemon-robot-server/dto"
 	"lemon-robot-server/entity"
-	"lemon-robot-server/model"
 	"lemon-robot-server/service/service_auth"
 	"lemon-robot-server/service/service_user"
 )
@@ -22,7 +22,7 @@ func RegApis(router *gin.RouterGroup) {
 }
 
 func login(ctx *gin.Context) {
-	reqAuthUser := model.ReqAuthUser{}
+	reqAuthUser := dto.LrUserAuthReq{}
 	http_common.DealError(ctx, ctx.BindJSON(&reqAuthUser), "", func(ctx *gin.Context) {
 		result, userEntity := service_user.CheckUser(reqAuthUser.Number, reqAuthUser.Password)
 		if result {
@@ -34,7 +34,7 @@ func login(ctx *gin.Context) {
 }
 
 func create(ctx *gin.Context) {
-	createUserReq := model.ReqUserCreate{}
+	createUserReq := dto.LrUserCreateReq{}
 	http_common.DealError(ctx, ctx.Bind(&createUserReq), "", func(ctx *gin.Context) {
 		count := dao_user.CountByUserExample(&entity.User{UserNumber: createUserReq.Number})
 		fmt.Println(count)

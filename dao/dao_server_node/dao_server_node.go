@@ -25,10 +25,11 @@ func FindAllByExample(example *entity.ServerNode) []entity.ServerNode {
 	return result
 }
 
-func FindAllExpiredNode() []entity.ServerNode {
+func FindAllActiveNode() []entity.ServerNode {
 	result := make([]entity.ServerNode, 3)
-	dur, _ := time.ParseDuration(fmt.Sprintf("-%ds", sysinfo.LrConfig().ClusterNodeActiveInterval))
-	db.Db().Where("active_time < ?", time.Now().Add(dur)).Find(&result)
+	// active容差为activeTime的二倍
+	dur, _ := time.ParseDuration(fmt.Sprintf("-%ds", sysinfo.LrConfig().ClusterNodeActiveInterval*2))
+	db.Db().Where("active_time > ?", time.Now().Add(dur)).Find(&result)
 	return result
 }
 
@@ -38,6 +39,10 @@ func CountByUserExample(example *entity.ServerNode) int {
 	return count
 }
 
-func UpdateActiveTime(machineCode string, activeTime time.Time) {
-	db.Db().Model(&entity.ServerNode{}).Where("machine_Code = ?", machineCode).Update("active_time", activeTime)
+func UpdateActiveTime(machineSign string, activeTime time.Time) {
+	db.Db().Model(&entity.ServerNode{}).Where("machine_sign = ?", machineSign).Update("active_time", activeTime)
+}
+
+func UpdateAlias(machineSign, newAlias string) {
+	db.Db().Model(&entity.ServerNode{}).Where("machine_sign = ?", machineSign).Update("alias", newAlias)
 }
