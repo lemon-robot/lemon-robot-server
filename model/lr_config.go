@@ -3,13 +3,13 @@ package model
 type LrConfig struct {
 	Host                      string            `json:"host"`
 	Port                      int               `json:"port"`
-	DbType                    string            `json:"db_type"`
-	DbUrl                     string            `json:"db_url"`
-	DbTablePrefix             string            `json:"db_table_prefix"`
-	WorkSpacePath             string            `json:"work_space_path"`
-	DebugMode                 bool              `json:"debug_mode"`
-	SecretHmacKeyword         string            `json:"secret_hmac_keyword"`
-	ClusterNodeActiveInterval int               `json:"cluster_node_active_interval"` // unit: seconds
-	GitType                   string            `json:"git_type"`
-	GitConfig                 map[string]string `json:"git_config"`
+	DbType                    string            `json:"dbType"`
+	DbUrl                     string            `json:"dbUrl"`
+	DbTablePrefix             string            `json:"dbTablePrefix"`
+	WorkSpacePath             string            `json:"workSpacePath"`
+	DebugMode                 bool              `json:"debugMode"`
+	SecretHmacKeyword         string            `json:"secretHmacKeyword"`
+	ClusterNodeActiveInterval int               `json:"clusterNodeActiveInterval"` // unit: seconds
+	GitType                   string            `json:"gitType"`
+	GitConfig                 map[string]string `json:"gitConfig"`
 }

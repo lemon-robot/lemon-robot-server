@@ -1,15 +1,15 @@
 {
   "host": "localhost",
   "port": 33385,
-  "db_type": "mysql",
-  "db_url": "root:1em0nsOft+@tcp(cdb-ejb66jsy.bj.tencentcdb.com:10077)/lemon_robot_server_dev?charset=utf8&parseTime=True&loc=Local",
-  "db_table_prefix": "lr_",
-  "work_space_path": "/Users/lemonit_cn/Downloads/lemon-robot-workspace",
-  "debug_mode": true,
-  "secret_hmac_keyword": "lemon.robot.secret",
-  "cluster_node_active_interval": 60,
-  "git_type": "gitea",
-  "git_config": {
+  "dbType": "mysql",
+  "dbUrl": "root:1em0nsOft+@tcp(cdb-ejb66jsy.bj.tencentcdb.com:10077)/lemon_robot_server_dev?charset=utf8&parseTime=True&loc=Local",
+  "dbTablePrefix": "lr_",
+  "workSpacePath": "/Users/lemonit_cn/Downloads/lemon-robot-workspace",
+  "debugMode": true,
+  "secretHmacKeyword": "lemon.robot.secret",
+  "clusterNodeActiveInterval": 60,
+  "gitType": "gitea",
+  "gitConfig": {
     "endpoint": "http://39.105.221.111:13000",
     "token": "973977842bae2009b9f215145066dfd752ac8be8"
   }
