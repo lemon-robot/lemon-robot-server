@@ -17,12 +17,12 @@ var DbObj *gorm.DB
 func InitDb() *gorm.DB {
 	// set table name rule
 	gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
-		return sysinfo.LrConfig().DbTablePrefix + defaultTableName
+		return sysinfo.LrServerConfig().DbTablePrefix + defaultTableName
 	}
 	logger.Info("The system started trying to connect to the database.")
-	db, err := gorm.Open(sysinfo.LrConfig().DbType, sysinfo.LrConfig().DbUrl)
+	db, err := gorm.Open(sysinfo.LrServerConfig().DbType, sysinfo.LrServerConfig().DbUrl)
 	// if enabled debug mode, show gorm log
-	db.LogMode(sysinfo.LrConfig().DebugMode)
+	db.LogMode(sysinfo.LrServerConfig().DebugMode)
 	DbObj = db
 	if err != nil {
 		logger.Error("The system could not continue to run because it could not establish a connection with the database", err)

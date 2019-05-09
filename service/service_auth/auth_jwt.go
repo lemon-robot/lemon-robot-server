@@ -22,7 +22,7 @@ func generateJwtPayload(userKey string) model.LrJwtPayload {
 		Issuer:    userKey,
 		IssuedAt:  time.Now().Unix(),
 		NotBefore: time.Now().Unix(),
-		ExpiresAt: time.Now().Add(time.Hour).Unix(),
+		ExpiresAt: time.Now().Add(time.Minute).Unix(),
 		Audience:  userKey,
 		Subject:   sysinfo.AppName(),
 	}

@@ -7,7 +7,7 @@ import (
 	"path"
 )
 
-var lrConfigObj = &model.LrConfig{}
+var lrServerConfigObj = &model.LrServerConfig{}
 
 const configFileName = "lemon.robot.json"
 
@@ -19,21 +19,21 @@ func checkConfigExisted() bool {
 	return lruio.PathExists(configFilePath())
 }
 
-func LrConfig() *model.LrConfig {
+func LrServerConfig() *model.LrServerConfig {
 	if checkConfigExisted() {
-		err := lruio.JsonToStruct(configFilePath(), &lrConfigObj)
+		err := lruio.JsonToStruct(configFilePath(), &lrServerConfigObj)
 		if err != nil {
 			logger.Error("An error occurred while parsing the configuration file_resource, , use default configuration to continue running the system.", err)
 			return defaultConfig()
 		}
-		return lrConfigObj
+		return lrServerConfigObj
 	}
 	logger.Warn("Configuration file_resource not found, use default configuration to continue running the system")
 	return defaultConfig()
 }
 
-func defaultConfig() *model.LrConfig {
-	return &model.LrConfig{
+func defaultConfig() *model.LrServerConfig {
+	return &model.LrServerConfig{
 		DbType:        "",
 		DbUrl:         "",
 		WorkSpacePath: "",
@@ -41,9 +41,9 @@ func defaultConfig() *model.LrConfig {
 }
 
 func GetWorkspaceSubPath(dirName string) string {
-	return path.Join(LrConfig().WorkSpacePath, dirName)
+	return path.Join(LrServerConfig().WorkSpacePath, dirName)
 }
 
 func GetHmacKeyBytes() []byte {
-	return []byte(LrConfig().SecretHmacKeyword)
+	return []byte(LrServerConfig().SecretHmacKeyword)
 }

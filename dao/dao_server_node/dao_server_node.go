@@ -28,7 +28,7 @@ func FindAllByExample(example *entity.ServerNode) []entity.ServerNode {
 func FindAllActiveNode() []entity.ServerNode {
 	result := make([]entity.ServerNode, 3)
 	// active容差为activeTime的二倍
-	dur, _ := time.ParseDuration(fmt.Sprintf("-%ds", sysinfo.LrConfig().ClusterNodeActiveInterval*2))
+	dur, _ := time.ParseDuration(fmt.Sprintf("-%ds", sysinfo.LrServerConfig().ClusterNodeActiveInterval*2))
 	db.Db().Where("active_time > ?", time.Now().Add(dur)).Find(&result)
 	return result
 }

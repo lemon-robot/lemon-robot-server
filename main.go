@@ -23,7 +23,7 @@ func startUp() {
 	logger.Info("Start the " + sysinfo.AppName() + " startup process")
 	lemonrobot.PrintInfo(sysinfo.AppName(), sysinfo.AppVersion())
 
-	if sysinfo.LrConfig().DebugMode {
+	if sysinfo.LrServerConfig().DebugMode {
 		gin.SetMode(gin.DebugMode)
 	} else {
 		gin.SetMode(gin.ReleaseMode)
@@ -40,12 +40,12 @@ func startUp() {
 	// start websocket
 	websocket.Serve(engine)
 
-	if _, ok := gitter.SupportedTypes()[sysinfo.LrConfig().GitType]; !ok {
-		logger.Error("This type of git server ["+sysinfo.LrConfig().GitType+"] is not supported", nil)
+	if _, ok := gitter.SupportedTypes()[sysinfo.LrServerConfig().GitType]; !ok {
+		logger.Error("This type of git server ["+sysinfo.LrServerConfig().GitType+"] is not supported", nil)
 		os.Exit(1)
 	}
-	logger.Info("Start trying to establish a connection to git server, git server type: " + sysinfo.LrConfig().GitType)
-	gitter.ConfigIns(sysinfo.LrConfig().GitType, sysinfo.LrConfig().GitConfig)
+	logger.Info("Start trying to establish a connection to git server, git server type: " + sysinfo.LrServerConfig().GitType)
+	gitter.ConfigIns(sysinfo.LrServerConfig().GitType, sysinfo.LrServerConfig().GitConfig)
 
 	// git clone test
 

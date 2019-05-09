@@ -1,6 +1,6 @@
 package model
 
-type LrConfig struct {
+type LrServerConfig struct {
 	Host                      string            `json:"host"`
 	Port                      int               `json:"port"`
 	DbType                    string            `json:"dbType"`

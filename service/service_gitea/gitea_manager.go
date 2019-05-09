@@ -9,7 +9,7 @@ var clientObj *gitea.Client
 
 func Client() *gitea.Client {
 	if clientObj == nil {
-		clientObj = gitea.NewClient(sysinfo.LrConfig().SecretHmacKeyword, sysinfo.LrConfig().SecretHmacKeyword)
+		clientObj = gitea.NewClient(sysinfo.LrServerConfig().SecretHmacKeyword, sysinfo.LrServerConfig().SecretHmacKeyword)
 	}
 	return clientObj
 }

@@ -53,7 +53,7 @@ func UpdateAlias(machineSign, newAlias string) {
 func QueryAllNodeInfo() []dto.ServerNodeResp {
 	serverNodes := dao_server_node.FindAllByExample(&entity.ServerNode{})
 	serverNodeInfoArr := make([]dto.ServerNodeResp, len(serverNodes))
-	dur, _ := time.ParseDuration(fmt.Sprintf("-%ds", sysinfo.LrConfig().ClusterNodeActiveInterval*2))
+	dur, _ := time.ParseDuration(fmt.Sprintf("-%ds", sysinfo.LrServerConfig().ClusterNodeActiveInterval*2))
 	for index, item := range serverNodes {
 		serverNodeInfoArr[index] = dto.ServerNodeResp{
 			NodeInfo:    item,
