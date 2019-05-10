@@ -10,10 +10,13 @@ import (
 	"lemon-robot-server/controller/controller_task"
 	"lemon-robot-server/controller/controller_user"
 	"lemon-robot-server/define/http_error_code_define"
-	"lemon-robot-server/service/service_auth"
+	"lemon-robot-server/service"
+	"lemon-robot-server/service_impl"
 	"net/http"
 	"strings"
 )
+
+var authService service.AuthService = service_impl.NewAuthServiceImpl()
 
 func RegAllApis(engine *gin.Engine) {
 	engine.Use(cors())
@@ -72,5 +75,5 @@ func responseAuthError(ctx *gin.Context) {
 
 func checkAuthToken(ctx *gin.Context) bool {
 	jwtTokenStr := strings.Split(ctx.Request.Header["Authorization"][0], " ")[1]
-	return service_auth.CheckToken(jwtTokenStr)
+	return authService.CheckToken(jwtTokenStr)
 }

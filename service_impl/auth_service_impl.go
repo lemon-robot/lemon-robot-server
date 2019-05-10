@@ -1,26 +1,36 @@
-package service_auth
+package service_impl
 
 import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
-	"lemon-robot-golang-commons/utils/lrustring"
-	"lemon-robot-server/dao/dao_user"
+	"lemon-robot-golang-commons/utils/lru_string"
+	"lemon-robot-server/dao"
 	"lemon-robot-server/entity"
 	"lemon-robot-server/model"
 	"lemon-robot-server/sysinfo"
 	"time"
 )
 
-func GenerateJwtTokenStr(userKey string) string {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, generateJwtPayload(userKey))
+type AuthServiceImpl struct {
+	userDao *dao.UserDao
+}
+
+func NewAuthServiceImpl() *AuthServiceImpl {
+	return &AuthServiceImpl{
+		userDao: dao.NewUserDao(),
+	}
+}
+
+func (i *AuthServiceImpl) GenerateJwtTokenStr(userKey string) string {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, i.generateJwtPayload(userKey))
 	tokenString, _ := token.SignedString(sysinfo.GetHmacKeyBytes())
 	return tokenString
 }
 
-func generateJwtPayload(userKey string) model.LrJwtPayload {
+func (i *AuthServiceImpl) generateJwtPayload(userKey string) model.LrJwtPayload {
 	expireDur, _ := time.ParseDuration(fmt.Sprintf("%dm", sysinfo.LrServerConfig().LoginAuthLength))
 	return model.LrJwtPayload{
-		Id:        lrustring.Uuid(),
+		Id:        lru_string.GetInstance().Uuid(),
 		Issuer:    userKey,
 		IssuedAt:  time.Now().Unix(),
 		NotBefore: time.Now().Unix(),
@@ -30,7 +40,7 @@ func generateJwtPayload(userKey string) model.LrJwtPayload {
 	}
 }
 
-func CheckToken(jwtTokenStr string) bool {
+func (i *AuthServiceImpl) CheckToken(jwtTokenStr string) bool {
 	jwtToken, err := jwt.Parse(jwtTokenStr, func(token *jwt.Token) (i interface{}, e error) {
 		return sysinfo.GetHmacKeyBytes(), nil
 	})
@@ -38,7 +48,7 @@ func CheckToken(jwtTokenStr string) bool {
 		return false
 	}
 	userKey := jwtToken.Claims.(jwt.MapClaims)["iss"]
-	user := dao_user.FirstByExample(&entity.User{UserKey: userKey.(string)})
+	user := i.userDao.FirstByExample(&entity.User{UserKey: userKey.(string)})
 	// user not found or have error
 	if user.UserKey == "" || err != nil {
 		return false

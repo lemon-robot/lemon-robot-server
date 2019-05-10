@@ -5,8 +5,11 @@ import (
 	"lemon-robot-golang-commons/logger"
 	"lemon-robot-server/controller/http_common"
 	"lemon-robot-server/entity"
-	"lemon-robot-server/service/service_task"
+	"lemon-robot-server/service"
+	"lemon-robot-server/service_impl"
 )
+
+var taskService service.TaskService = service_impl.NewTaskServiceImpl()
 
 const urlPrefix = "/task"
 
@@ -15,7 +18,7 @@ func RegApis(router *gin.RouterGroup) {
 }
 
 func create(ctx *gin.Context) {
-	err := service_task.Create(entity.Task{
+	err := taskService.Create(entity.Task{
 		TaskName: "哈哈任务",
 		BelongNamespace: entity.Namespace{
 			NamespaceName: "哈哈命名空间",
@@ -29,7 +32,7 @@ func create(ctx *gin.Context) {
 	http_common.Success(ctx, "ok")
 	//createUserReq := model.ReqUserCreate{}
 	//http_common.DealError(ctx, ctx.Bind(&createUserReq), "", func(ctx *gin.Context) {
-	//	result, _ := service_user.CreateUser(createUserReq.Number, createUserReq.Password)
+	//	result, _ := service_user.Create(createUserReq.Number, createUserReq.Password)
 	//	http_common.Success(ctx, result)
 	//})
 }

@@ -3,6 +3,10 @@
 	"ignore": "test",
 	"package": [
 		{
+			"path": "-v",
+			"revision": ""
+		},
+		{
 			"checksumSHA1": "blOHP3HPYU+IeV6yWCalQuuM+zE=",
 			"path": "github.com/dgrijalva/jwt-go",
 			"revision": "3af4c746e1c248ee8491a3e0c6f7a9cd831e95f8",
@@ -99,6 +103,18 @@
 			"path": "github.com/golang/protobuf/proto",
 			"revision": "1d3f30b51784bec5aad268e59fd3c2fc1c2fe73f",
 			"revisionTime": "2018-11-28T19:23:52Z"
+		},
+		{
+			"checksumSHA1": "Gt7WIVa68UE230+gvaz66PCCGik=",
+			"path": "github.com/google/wire/cmd/wire",
+			"revision": "2183ee4806cf1878e136fea26f06f9abef9375b6",
+			"revisionTime": "2019-05-02T16:57:08Z"
+		},
+		{
+			"checksumSHA1": "2Gv4NpDVhml0C+Y0Fywu3vEYfwI=",
+			"path": "github.com/google/wire/internal/wire",
+			"revision": "2183ee4806cf1878e136fea26f06f9abef9375b6",
+			"revisionTime": "2019-05-02T16:57:08Z"
 		},
 		{
 			"checksumSHA1": "gr0edNJuVv4+olNNZl5ZmwLgscA=",
@@ -203,6 +219,12 @@
 			"revisionTime": "2019-01-03T23:56:59Z"
 		},
 		{
+			"checksumSHA1": "LuFv4/jlrmFNnDb/5SCSEPAM9vU=",
+			"path": "github.com/pmezard/go-difflib/difflib",
+			"revision": "5d4384ee4fb2527b0a1256a821ebfc92f91efefc",
+			"revisionTime": "2018-12-26T10:54:42Z"
+		},
+		{
 			"checksumSHA1": "8QeSG127zQqbA+YfkO1WkKx/iUI=",
 			"path": "github.com/src-d/gcfg",
 			"revision": "f187355171c936ac84a82793659ebb4936bc1c23",
@@ -264,6 +286,18 @@
 		},
 		{
 			"path": "golang.org/x/sys/unix",
+			"revision": ""
+		},
+		{
+			"path": "golang.org/x/tools/go/ast/astutil",
+			"revision": ""
+		},
+		{
+			"path": "golang.org/x/tools/go/packages",
+			"revision": ""
+		},
+		{
+			"path": "golang.org/x/tools/go/types/typeutil",
 			"revision": ""
 		},
 		{

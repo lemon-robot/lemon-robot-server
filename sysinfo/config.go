@@ -2,7 +2,7 @@ package sysinfo
 
 import (
 	"lemon-robot-golang-commons/logger"
-	"lemon-robot-golang-commons/utils/lruio"
+	"lemon-robot-golang-commons/utils/lru_io"
 	"lemon-robot-server/model"
 	"path"
 )
@@ -12,16 +12,16 @@ var lrServerConfigObj = &model.LrServerConfig{}
 const configFileName = "lemon.robot.json"
 
 func configFilePath() string {
-	return lruio.GetRuntimePath(configFileName)
+	return lru_io.GetInstance().GetRuntimePath(configFileName)
 }
 
 func checkConfigExisted() bool {
-	return lruio.PathExists(configFilePath())
+	return lru_io.GetInstance().PathExists(configFilePath())
 }
 
 func LrServerConfig() *model.LrServerConfig {
 	if checkConfigExisted() {
-		err := lruio.JsonToStruct(configFilePath(), &lrServerConfigObj)
+		err := lru_io.GetInstance().JsonToStruct(configFilePath(), &lrServerConfigObj)
 		if err != nil {
 			logger.Error("An error occurred while parsing the configuration file_resource, , use default configuration to continue running the system.", err)
 			return defaultConfig()

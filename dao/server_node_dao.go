@@ -1,4 +1,4 @@
-package dao_server_node
+package dao
 
 import (
 	"fmt"
@@ -9,24 +9,30 @@ import (
 	"time"
 )
 
-func Save(entity *entity.ServerNode) *gorm.DB {
+type ServerNodeDao struct{}
+
+func NewServerNodeDao() *ServerNodeDao {
+	return &ServerNodeDao{}
+}
+
+func (i *ServerNodeDao) Save(entity *entity.ServerNode) *gorm.DB {
 	return db.Db().Save(entity)
 }
 
-func FirstByExample(example *entity.ServerNode) entity.ServerNode {
+func (i *ServerNodeDao) FirstByExample(example *entity.ServerNode) entity.ServerNode {
 	result := entity.ServerNode{}
 	db.Db().First(&result, example)
 	return result
 }
 
-func FindAllByExample(example *entity.ServerNode) []entity.ServerNode {
+func (i *ServerNodeDao) FindAllByExample(example *entity.ServerNode) []entity.ServerNode {
 	result := make([]entity.ServerNode, 3)
 	//db.Db().Find(&result, example)
 	db.Db().Set("gorm:auto_preload", true).Find(&result, example)
 	return result
 }
 
-func FindAllActiveNode() []entity.ServerNode {
+func (i *ServerNodeDao) FindAllActiveNode() []entity.ServerNode {
 	result := make([]entity.ServerNode, 3)
 	// active容差为activeTime的二倍
 	dur, _ := time.ParseDuration(fmt.Sprintf("-%ds", sysinfo.LrServerConfig().ClusterNodeActiveInterval*2))
@@ -34,16 +40,16 @@ func FindAllActiveNode() []entity.ServerNode {
 	return result
 }
 
-func CountByUserExample(example *entity.ServerNode) int {
+func (i *ServerNodeDao) CountByUserExample(example *entity.ServerNode) int {
 	var count int
 	db.Db().Model(&entity.ServerNode{}).Where(example).Count(&count)
 	return count
 }
 
-func UpdateActiveTime(machineSign string, activeTime time.Time) {
+func (i *ServerNodeDao) UpdateActiveTime(machineSign string, activeTime time.Time) {
 	db.Db().Model(&entity.ServerNode{}).Where("machine_sign = ?", machineSign).Update("active_time", activeTime)
 }
 
-func UpdateAlias(machineSign, newAlias string) {
+func (i *ServerNodeDao) UpdateAlias(machineSign, newAlias string) {
 	db.Db().Model(&entity.ServerNode{}).Where("machine_sign = ?", machineSign).Update("alias", newAlias)
 }

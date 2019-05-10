@@ -5,12 +5,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"lemon-robot-golang-commons/logger"
-	"lemon-robot-golang-commons/utils/lrustring"
-	"lemon-robot-server/dao/dao_dispatcher_machine"
-	"lemon-robot-server/dao/dao_dispatcher_online"
+	"lemon-robot-golang-commons/utils/lru_machine"
+	"lemon-robot-golang-commons/utils/lru_string"
 	"lemon-robot-server/entity"
-	"lemon-robot-server/service/service_auth"
-	"lemon-robot-server/service/service_server_node"
+	"lemon-robot-server/service"
+	"lemon-robot-server/service_impl"
 	"log"
 	"net/http"
 )
@@ -20,12 +19,14 @@ var upGrader = websocket.Upgrader{
 		return true
 	},
 }
-
 var connectPool = make(map[string]*websocket.Conn)
+var authService service.AuthService = service_impl.NewAuthServiceImpl()
+var dispatcherMachineService = service_impl.NewDispatcherMachineServiceImpl()
+var dispatcherOnlineService service.DispatcherOnlineService = service_impl.NewDispatcherOnlineServiceImpl()
 
 func dealConnectionClose(onlineKey string) {
 	delete(connectPool, onlineKey)
-	dao_dispatcher_online.Delete("online_key", onlineKey)
+	dispatcherOnlineService.DeleteByOnlineKey(onlineKey)
 	// TODO 删除正在此机器上执行的计划
 	logger.Info(fmt.Sprint("A Websocket connection is broken, online key: ", onlineKey))
 	logger.Info(fmt.Sprint("The number of remaining connections on the current node: ", len(connectPool)))
@@ -33,8 +34,8 @@ func dealConnectionClose(onlineKey string) {
 
 func ConnectHandler(context *gin.Context) {
 	token := context.Param("token")
-	onlineKey := lrustring.Uuid()
-	if service_auth.CheckToken(token) {
+	onlineKey := lru_string.GetInstance().Uuid()
+	if authService.CheckToken(token) {
 		os := context.Param("os")
 		arch := context.Param("arch")
 		dispatcherVersion := context.Param("dispatcherVersion")
@@ -45,13 +46,13 @@ func ConnectHandler(context *gin.Context) {
 			OperateSystem:     os,
 			DispatcherVersion: dispatcherVersion,
 		}
-		dao_dispatcher_machine.Save(&machineEntity)
-		dao_dispatcher_online.Save(&entity.DispatcherOnline{
+		dispatcherMachineService.Save(&machineEntity)
+		dispatcherOnlineService.Save(&entity.DispatcherOnline{
 			OnlineKey:                 onlineKey,
 			RelationMachineSign:       machineSign,
 			RelationDispatcherMachine: machineEntity,
 			IpAddress:                 context.ClientIP(),
-			BindServerMachineSign:     service_server_node.GetCalculatedMachineSign(),
+			BindServerMachineSign:     lru_machine.GetInstance().GetMachineSign(),
 		})
 		logger.Info(
 			fmt.Sprintf(

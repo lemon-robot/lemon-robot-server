@@ -1,4 +1,4 @@
-package service_gitea
+package service_impl
 
 import (
 	"github.com/go-gitea/go-sdk/gitea"

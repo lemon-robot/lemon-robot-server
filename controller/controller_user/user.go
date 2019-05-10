@@ -1,16 +1,17 @@
 package controller_user
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"lemon-robot-server/controller/http_common"
-	"lemon-robot-server/dao/dao_user"
 	"lemon-robot-server/define/http_error_code_define"
 	"lemon-robot-server/dto"
-	"lemon-robot-server/entity"
-	"lemon-robot-server/service/service_auth"
-	"lemon-robot-server/service/service_user"
+	"lemon-robot-server/service"
+	"lemon-robot-server/service_impl"
+	"lemon-robot-server/sysinfo"
 )
+
+var userService service.UserService = service_impl.NewUserServiceImpl(sysinfo.LrServerConfig().SecretHmacKeyword)
+var authService service.AuthService = service_impl.NewAuthServiceImpl()
 
 const urlPrefix = "/user"
 const urlLogin = "/login"
@@ -24,9 +25,9 @@ func RegApis(router *gin.RouterGroup) {
 func login(ctx *gin.Context) {
 	reqAuthUser := dto.LrUserAuthReq{}
 	http_common.DealError(ctx, ctx.BindJSON(&reqAuthUser), "", func(ctx *gin.Context) {
-		result, userEntity := service_user.CheckUser(reqAuthUser.Number, reqAuthUser.Password)
+		result, userEntity := userService.CheckPassword(reqAuthUser.Number, reqAuthUser.Password)
 		if result {
-			http_common.Success(ctx, service_auth.GenerateJwtTokenStr(userEntity.UserKey))
+			http_common.Success(ctx, authService.GenerateJwtTokenStr(userEntity.UserKey))
 		} else {
 			http_common.Failed(ctx, http_error_code_define.User_LoginIdentityInfoVerifyFailed)
 		}
@@ -36,13 +37,12 @@ func login(ctx *gin.Context) {
 func create(ctx *gin.Context) {
 	createUserReq := dto.LrUserCreateReq{}
 	http_common.DealError(ctx, ctx.Bind(&createUserReq), "", func(ctx *gin.Context) {
-		count := dao_user.CountByUserExample(&entity.User{UserNumber: createUserReq.Number})
-		fmt.Println(count)
+		count := userService.CountByNumber(createUserReq.Number)
 		if count > 0 {
 			http_common.Failed(ctx, http_error_code_define.User_CreateFailedNumberAlreadyExists)
 			return
 		}
-		err, _ := service_user.CreateUser(createUserReq.Number, createUserReq.Password)
+		err, _ := userService.Create(createUserReq.Number, createUserReq.Password)
 		if err == nil {
 			http_common.Success(ctx, true)
 		} else {

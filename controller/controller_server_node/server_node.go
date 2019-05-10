@@ -4,8 +4,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"lemon-robot-server/controller/http_common"
 	"lemon-robot-server/dto"
-	"lemon-robot-server/service/service_server_node"
+	"lemon-robot-server/service"
+	"lemon-robot-server/service_impl"
 )
+
+var serverNodeService service.ServerNodeService = service_impl.NewServerNodeServiceImpl()
 
 const urlPrefix = "/server_node"
 
@@ -15,13 +18,13 @@ func RegApis(router *gin.RouterGroup) {
 }
 
 func list(ctx *gin.Context) {
-	http_common.Success(ctx, service_server_node.QueryAllNodeInfo())
+	http_common.Success(ctx, serverNodeService.QueryAllNodeInfo())
 }
 
 func updateAlias(ctx *gin.Context) {
 	updateAliasInfo := &dto.ServerNodeUpdateAliasReq{}
 	http_common.DealError(ctx, ctx.BindJSON(&updateAliasInfo), "", func(ctx *gin.Context) {
-		service_server_node.UpdateAlias(updateAliasInfo.MachineSign, updateAliasInfo.Alias)
+		serverNodeService.UpdateAlias(updateAliasInfo.MachineSign, updateAliasInfo.Alias)
 		http_common.Success(ctx, true)
 	})
 }

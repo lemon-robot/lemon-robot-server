@@ -8,9 +8,8 @@ import (
 	"lemon-robot-server/core/gitter"
 	"lemon-robot-server/core/websocket"
 	"lemon-robot-server/db"
-	"lemon-robot-server/service/service_server_node"
-	"lemon-robot-server/service/service_timer"
-	"lemon-robot-server/service/service_user"
+	"lemon-robot-server/service"
+	"lemon-robot-server/service_impl"
 	"lemon-robot-server/sysinfo"
 	"os"
 )
@@ -20,6 +19,9 @@ func main() {
 }
 
 func startUp() {
+	var timerService service.TimerService = service_impl.NewTimerServiceImpl()
+	var serverNodeService service.ServerNodeService = service_impl.NewServerNodeServiceImpl()
+
 	logger.Info("Start the " + sysinfo.AppName() + " startup process")
 	lemonrobot.PrintInfo(sysinfo.AppName(), sysinfo.AppVersion())
 
@@ -31,8 +33,8 @@ func startUp() {
 
 	db.InitDb()
 	SysSelfRepair()
-	service_timer.StartAllTimer()
-	service_server_node.RegisterServerNode()
+	timerService.StartTimer()
+	serverNodeService.RegisterServerNode()
 
 	engine := gin.Default()
 	// start rest api
@@ -62,5 +64,6 @@ func startUp() {
 }
 
 func SysSelfRepair() {
-	service_user.SelfRepair()
+	//var sss []*service.SelfRepairService = []
+	service_impl.NewUserServiceImpl(sysinfo.LrServerConfig().SecretHmacKeyword).SelfRepair()
 }
