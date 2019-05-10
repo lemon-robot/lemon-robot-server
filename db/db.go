@@ -24,6 +24,7 @@ func InitDb() *gorm.DB {
 	// if enabled debug mode, show gorm log
 	db.LogMode(sysinfo.LrServerConfig().DebugMode)
 	DbObj = db
+	db.Set("gorm:auto_preload", true)
 	if err != nil {
 		logger.Error("The system could not continue to run because it could not establish a connection with the database", err)
 		os.Exit(1)

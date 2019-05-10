@@ -48,6 +48,7 @@ func ConnectHandler(context *gin.Context) {
 		dao_dispatcher_machine.Save(&machineEntity)
 		dao_dispatcher_online.Save(&entity.DispatcherOnline{
 			OnlineKey:                 onlineKey,
+			RelationMachineSign:       machineSign,
 			RelationDispatcherMachine: machineEntity,
 			IpAddress:                 context.ClientIP(),
 			BindServerMachineSign:     service_server_node.GetCalculatedMachineSign(),

@@ -1,6 +1,7 @@
 package service_auth
 
 import (
+	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"lemon-robot-golang-commons/utils/lrustring"
 	"lemon-robot-server/dao/dao_user"
@@ -17,12 +18,13 @@ func GenerateJwtTokenStr(userKey string) string {
 }
 
 func generateJwtPayload(userKey string) model.LrJwtPayload {
+	expireDur, _ := time.ParseDuration(fmt.Sprintf("%dm", sysinfo.LrServerConfig().LoginAuthLength))
 	return model.LrJwtPayload{
 		Id:        lrustring.Uuid(),
 		Issuer:    userKey,
 		IssuedAt:  time.Now().Unix(),
 		NotBefore: time.Now().Unix(),
-		ExpiresAt: time.Now().Add(time.Minute).Unix(),
+		ExpiresAt: time.Now().Add(expireDur).Unix(),
 		Audience:  userKey,
 		Subject:   sysinfo.AppName(),
 	}

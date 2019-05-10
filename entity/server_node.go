@@ -10,5 +10,5 @@ type ServerNode struct {
 	Alias             string             `gorm:"size:64" json:"alias"`
 	StartAt           time.Time          `json:"startAt"`
 	ActiveTime        time.Time          `json:"activeTime"`
-	OnlineDispatchers []DispatcherOnline `gorm:"ForeignKey:MachineSign;AssociationForeignKey:BindServerMachineSign" json:"onlineDispatchers"`
+	OnlineDispatchers []DispatcherOnline `gorm:"ForeignKey:BindServerMachineSign;AssociationForeignKey:MachineSign;" json:"onlineDispatchers"`
 }

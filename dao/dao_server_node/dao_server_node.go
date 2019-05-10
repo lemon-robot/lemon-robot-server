@@ -21,7 +21,8 @@ func FirstByExample(example *entity.ServerNode) entity.ServerNode {
 
 func FindAllByExample(example *entity.ServerNode) []entity.ServerNode {
 	result := make([]entity.ServerNode, 3)
-	db.Db().Find(&result, example)
+	//db.Db().Find(&result, example)
+	db.Db().Set("gorm:auto_preload", true).Find(&result, example)
 	return result
 }
 

@@ -6,6 +6,7 @@ type LrServerConfig struct {
 	DbType                    string            `json:"dbType"`
 	DbUrl                     string            `json:"dbUrl"`
 	DbTablePrefix             string            `json:"dbTablePrefix"`
+	LoginAuthLength           int               `json:"loginAuthLength"` // unit: minutes
 	WorkSpacePath             string            `json:"workSpacePath"`
 	DebugMode                 bool              `json:"debugMode"`
 	SecretHmacKeyword         string            `json:"secretHmacKeyword"`

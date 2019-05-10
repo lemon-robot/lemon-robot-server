@@ -14,25 +14,28 @@ import (
 	"time"
 )
 
-var calculatedMachineSign string
+type ServerNodeService struct {
+	serverNodeDao         dao_dispatcher_online.DispatcherOnlineDao
+	calculatedMachineSign string
+}
 
-func GetCalculatedMachineSign() string {
-	if calculatedMachineSign == "" {
+func (i ServerNodeService) GetCalculatedMachineSign() string {
+	if i.calculatedMachineSign == "" {
 		machineSign, mcErr := lrumachine.GetMachineSign()
 		if mcErr != nil {
 			logger.Error("Server nodes cannot be registered because machine sign cannot be computed", mcErr)
 			os.Exit(1)
 		}
-		calculatedMachineSign = machineSign
+		i.calculatedMachineSign = machineSign
 	}
-	return calculatedMachineSign
+	return i.calculatedMachineSign
 }
 
-func RegisterServerNode() {
-	dao_dispatcher_online.DeleteByClusterNodeMachineSign(GetCalculatedMachineSign())
+func (i ServerNodeService) RegisterServerNode() {
+	i.serverNodeDao.DeleteByClusterNodeMachineSign(i.GetCalculatedMachineSign())
 	now := time.Now()
 	nodeData := &entity.ServerNode{
-		MachineSign:   GetCalculatedMachineSign(),
+		MachineSign:   i.GetCalculatedMachineSign(),
 		CpuArch:       runtime.GOARCH,
 		OperateSystem: runtime.GOOS,
 		ServerVersion: sysinfo.AppVersion(),
@@ -42,15 +45,15 @@ func RegisterServerNode() {
 	dao_server_node.Save(nodeData)
 }
 
-func RefreshActiveTime() {
-	dao_server_node.UpdateActiveTime(GetCalculatedMachineSign(), time.Now())
+func (i ServerNodeService) RefreshActiveTime() {
+	dao_server_node.UpdateActiveTime(i.GetCalculatedMachineSign(), time.Now())
 }
 
-func UpdateAlias(machineSign, newAlias string) {
+func (i ServerNodeService) UpdateAlias(machineSign, newAlias string) {
 	dao_server_node.UpdateAlias(machineSign, newAlias)
 }
 
-func QueryAllNodeInfo() []dto.ServerNodeResp {
+func (i ServerNodeService) QueryAllNodeInfo() []dto.ServerNodeResp {
 	serverNodes := dao_server_node.FindAllByExample(&entity.ServerNode{})
 	serverNodeInfoArr := make([]dto.ServerNodeResp, len(serverNodes))
 	dur, _ := time.ParseDuration(fmt.Sprintf("-%ds", sysinfo.LrServerConfig().ClusterNodeActiveInterval*2))
