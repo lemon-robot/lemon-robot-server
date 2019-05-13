@@ -3,6 +3,7 @@ package dao
 import (
 	"fmt"
 	"github.com/jinzhu/gorm"
+	"lemon-robot-golang-commons/utils/lru_date"
 	"lemon-robot-server/db"
 	"lemon-robot-server/entity"
 	"lemon-robot-server/sysinfo"
@@ -28,15 +29,15 @@ func (i *ServerNodeDao) FirstByExample(example *entity.ServerNode) entity.Server
 func (i *ServerNodeDao) FindAllByExample(example *entity.ServerNode) []entity.ServerNode {
 	result := make([]entity.ServerNode, 3)
 	//db.Db().Find(&result, example)
-	db.Db().Set("gorm:auto_preload", true).Find(&result, example)
+	db.Db().Set("gorm:auto_preload", true).Order("active_time desc").Find(&result, example)
 	return result
 }
 
 func (i *ServerNodeDao) FindAllActiveNode() []entity.ServerNode {
 	result := make([]entity.ServerNode, 3)
 	// active容差为activeTime的二倍
-	dur, _ := time.ParseDuration(fmt.Sprintf("-%ds", sysinfo.LrServerConfig().ClusterNodeActiveInterval*2))
-	db.Db().Where("active_time > ?", time.Now().Add(dur)).Find(&result)
+	db.Db().Where("active_time > ?", lru_date.GetInstance().CalculateTimeByDurationStr(
+		time.Now(), fmt.Sprintf("-%ds", sysinfo.LrServerConfig().ClusterNodeActiveInterval*2))).Find(&result)
 	return result
 }
 

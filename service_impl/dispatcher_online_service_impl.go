@@ -22,3 +22,7 @@ func (i *DispatcherOnlineServiceImpl) DeleteByOnlineKey(onlineKey string) {
 func (i *DispatcherOnlineServiceImpl) Save(dispatcherOnline *entity.DispatcherOnline) {
 	i.dispatcherOnlineDao.Save(dispatcherOnline)
 }
+
+func (i *DispatcherOnlineServiceImpl) ClearAllOffline() {
+	i.dispatcherOnlineDao.ClearAllOffline()
+}

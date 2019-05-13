@@ -1,9 +1,13 @@
 package dao
 
 import (
+	"fmt"
 	"github.com/jinzhu/gorm"
+	"lemon-robot-golang-commons/utils/lru_date"
 	"lemon-robot-server/db"
 	"lemon-robot-server/entity"
+	"lemon-robot-server/sysinfo"
+	"time"
 )
 
 type DispatcherOnlineDao struct{}
@@ -34,4 +38,13 @@ func (i *DispatcherOnlineDao) CountByUserExample(example *entity.DispatcherOnlin
 	var count int
 	db.Db().Model(&entity.DispatcherOnline{}).Where(example).Count(&count)
 	return count
+}
+
+func (i *DispatcherOnlineDao) ClearAllOffline() {
+	db.Db().Exec(`DELETE LDO
+		FROM lr_dispatcher_onlines LDO,
+			 lr_server_nodes LSN
+		WHERE LDO.bind_server_machine_sign = LSN.machine_sign
+		AND LSN.active_time < ?`, lru_date.GetInstance().CalculateTimeByDurationStr(
+		time.Now(), fmt.Sprintf("-%ds", sysinfo.LrServerConfig().ClusterNodeActiveInterval*2)))
 }

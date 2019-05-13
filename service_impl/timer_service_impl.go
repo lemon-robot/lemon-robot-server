@@ -10,12 +10,14 @@ import (
 var timerWorkLock sync.WaitGroup
 
 type TimerServiceImpl struct {
-	serverNodeService service.ServerNodeService
+	serverNodeService       service.ServerNodeService
+	dispatcherOnlineService service.DispatcherOnlineService
 }
 
 func NewTimerServiceImpl() *TimerServiceImpl {
 	return &TimerServiceImpl{
-		serverNodeService: NewServerNodeServiceImpl(),
+		serverNodeService:       NewServerNodeServiceImpl(),
+		dispatcherOnlineService: NewDispatcherOnlineServiceImpl(),
 	}
 }
 
@@ -29,6 +31,7 @@ func (i *TimerServiceImpl) startActiveTimer() {
 	go func() {
 		for range ticker.C {
 			i.serverNodeService.RefreshActiveTime()
+			i.dispatcherOnlineService.ClearAllOffline()
 		}
 	}()
 }

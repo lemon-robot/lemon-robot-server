@@ -2,6 +2,7 @@ package service_impl
 
 import (
 	"fmt"
+	"lemon-robot-golang-commons/utils/lru_date"
 	"lemon-robot-golang-commons/utils/lru_machine"
 	"lemon-robot-server/dao"
 	"lemon-robot-server/dto"
@@ -49,11 +50,11 @@ func (i *ServerNodeServiceImpl) UpdateAlias(machineSign, newAlias string) {
 func (i *ServerNodeServiceImpl) QueryAllNodeInfo() []dto.ServerNodeResp {
 	serverNodes := i.serverNodeDao.FindAllByExample(&entity.ServerNode{})
 	serverNodeInfoArr := make([]dto.ServerNodeResp, len(serverNodes))
-	dur, _ := time.ParseDuration(fmt.Sprintf("-%ds", sysinfo.LrServerConfig().ClusterNodeActiveInterval*2))
 	for index, item := range serverNodes {
 		serverNodeInfoArr[index] = dto.ServerNodeResp{
-			NodeInfo:    item,
-			ActiveState: item.ActiveTime.After(time.Now().Add(dur)),
+			NodeInfo: item,
+			ActiveState: item.ActiveTime.After(lru_date.GetInstance().CalculateTimeByDurationStr(
+				time.Now(), fmt.Sprintf("-%ds", sysinfo.LrServerConfig().ClusterNodeActiveInterval*2))),
 		}
 	}
 	return serverNodeInfoArr
