@@ -40,13 +40,18 @@ func ConnectHandler(context *gin.Context) {
 		arch := context.Param("arch")
 		dispatcherVersion := context.Param("dispatcherVersion")
 		machineSign := context.Param("machineSign")
-		machineEntity := entity.DispatcherMachine{
-			MachineSign:       machineSign,
-			CpuArch:           arch,
-			OperateSystem:     os,
-			DispatcherVersion: dispatcherVersion,
+		machineEntity := dispatcherMachineService.FindByServerNodeMachineSign(machineSign)
+		if machineEntity.MachineSign == "" {
+			machineEntity = entity.DispatcherMachine{
+				MachineSign:       machineSign,
+				CpuArch:           arch,
+				OperateSystem:     os,
+				DispatcherVersion: dispatcherVersion,
+				Alias:             "",
+				Tags:              make([]entity.DispatcherTag, 0),
+			}
+			dispatcherMachineService.Save(&machineEntity)
 		}
-		dispatcherMachineService.Save(&machineEntity)
 		dispatcherOnlineService.Save(&entity.DispatcherOnline{
 			OnlineKey:                 onlineKey,
 			RelationMachineSign:       machineSign,

@@ -27,16 +27,25 @@ func NewServerNodeServiceImpl() *ServerNodeServiceImpl {
 
 func (i *ServerNodeServiceImpl) RegisterServerNode() {
 	i.dispatcherOnlineDao.DeleteByServerNodeMachineSign(lru_machine.GetInstance().GetMachineSign())
+	nodeData := i.serverNodeDao.FirstByExample(&entity.ServerNode{
+		MachineSign: lru_machine.GetInstance().GetMachineSign(),
+	})
 	now := time.Now()
-	nodeData := &entity.ServerNode{
-		MachineSign:   lru_machine.GetInstance().GetMachineSign(),
-		CpuArch:       runtime.GOARCH,
-		OperateSystem: runtime.GOOS,
-		ServerVersion: sysinfo.AppVersion(),
-		StartAt:       now,
-		ActiveTime:    now,
+	if nodeData.MachineSign == "" {
+		nodeData = entity.ServerNode{
+			MachineSign:   lru_machine.GetInstance().GetMachineSign(),
+			CpuArch:       runtime.GOARCH,
+			OperateSystem: runtime.GOOS,
+			ServerVersion: sysinfo.AppVersion(),
+			StartAt:       now,
+			ActiveTime:    now,
+			Alias:         "",
+		}
+	} else {
+		nodeData.StartAt = now
+		nodeData.ActiveTime = now
 	}
-	i.serverNodeDao.Save(nodeData)
+	i.serverNodeDao.Save(&nodeData)
 }
 
 func (i *ServerNodeServiceImpl) RefreshActiveTime() {

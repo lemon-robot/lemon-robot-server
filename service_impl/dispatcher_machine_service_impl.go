@@ -18,3 +18,9 @@ func NewDispatcherMachineServiceImpl() *DispatcherMachineServiceImpl {
 func (i *DispatcherMachineServiceImpl) Save(dispatcherMachine *entity.DispatcherMachine) {
 	i.dispatcherMachineDao.Save(dispatcherMachine)
 }
+
+func (i *DispatcherMachineServiceImpl) FindByServerNodeMachineSign(machineSign string) entity.DispatcherMachine {
+	return i.dispatcherMachineDao.FirstByExample(&entity.DispatcherMachine{
+		MachineSign: machineSign,
+	})
+}
