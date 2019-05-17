@@ -5,6 +5,7 @@ import (
 	"lemon-robot-golang-commons/logger"
 	"lemon-robot-golang-commons/model"
 	"lemon-robot-server/controller/controller_dispatcher"
+	"lemon-robot-server/controller/controller_dispatcher_tag"
 	"lemon-robot-server/controller/controller_file_resource"
 	"lemon-robot-server/controller/controller_server_node"
 	"lemon-robot-server/controller/controller_task"
@@ -22,6 +23,7 @@ func RegAllApis(engine *gin.Engine) {
 	engine.Use(cors())
 	authRouter := engine.Group("/", checkAuthHandler())
 	controller_dispatcher.RegApis(authRouter)
+	controller_dispatcher_tag.RegApis(authRouter)
 	controller_file_resource.RegApis(authRouter)
 	controller_server_node.RegApis(authRouter)
 	controller_task.RegApis(authRouter)
