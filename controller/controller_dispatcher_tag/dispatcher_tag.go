@@ -14,8 +14,8 @@ const urlPrefix = "/dispatcher_tag"
 
 func RegApis(router *gin.RouterGroup) {
 	router.GET(urlPrefix+"/list", list)
-	router.PUT(urlPrefix+"/save", save)
-	router.PUT(urlPrefix+"/save/:tagKey", deleteByTagKey)
+	router.PUT(urlPrefix, save)
+	router.DELETE(urlPrefix, deleteByTagKey)
 }
 
 func list(ctx *gin.Context) {
@@ -31,7 +31,7 @@ func save(ctx *gin.Context) {
 }
 
 func deleteByTagKey(ctx *gin.Context) {
-	tagKey := ctx.Param("tagKey")
+	tagKey := ctx.Query("tagKey")
 	dispatcherTagService.Delete(tagKey)
 	http_common.Success(ctx, true)
 }

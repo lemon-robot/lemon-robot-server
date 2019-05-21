@@ -16,12 +16,14 @@ func NewDispatcherOnlineDao() *DispatcherOnlineDao {
 	return &DispatcherOnlineDao{}
 }
 
-func (i *DispatcherOnlineDao) Delete(query interface{}, where ...interface{}) {
-	db.Db().Where(query, where).Delete(&entity.DispatcherOnline{})
+func (i *DispatcherOnlineDao) Delete(example *entity.DispatcherOnline) {
+	db.Db().Where(example).Delete(example)
 }
 
 func (i *DispatcherOnlineDao) DeleteByServerNodeMachineSign(nodeMachineSign string) {
-	i.Delete("bind_server_machine_sign = ?", nodeMachineSign)
+	i.Delete(&entity.DispatcherOnline{
+		BindServerMachineSign: nodeMachineSign,
+	})
 }
 
 func (i *DispatcherOnlineDao) Save(entity *entity.DispatcherOnline) *gorm.DB {
@@ -41,10 +43,7 @@ func (i *DispatcherOnlineDao) CountByUserExample(example *entity.DispatcherOnlin
 }
 
 func (i *DispatcherOnlineDao) ClearAllOffline() {
-	db.Db().Exec(`DELETE LDO
-		FROM lr_dispatcher_onlines LDO,
-			 lr_server_nodes LSN
-		WHERE LDO.bind_server_machine_sign = LSN.machine_sign
-		AND LSN.active_time < ?`, lru_date.GetInstance().CalculateTimeByDurationStr(
-		time.Now(), fmt.Sprintf("-%ds", sysinfo.LrServerConfig().ClusterNodeActiveInterval*2)))
+	db.Db().Where("active_time < ?", lru_date.GetInstance().CalculateTimeByDurationStr(
+		time.Now(), fmt.Sprintf("-%ds", sysinfo.LrServerConfig().ClusterNodeActiveInterval*2))).Find(
+		&entity.ServerNode{}).Association("OnlineDispatchers").Clear()
 }

@@ -24,7 +24,7 @@ func (i *DispatcherTagServiceImpl) Save(tagSaveReq *dto.DispatcherTagSaveReq) {
 		TagKey: tagSaveReq.TagKey,
 	})
 	tagEntity.TagName = tagSaveReq.TagName
-	if tagEntity.TagKey == "" {
+	if tagSaveReq.TagKey == "" || tagEntity.TagKey == "" {
 		tagEntity.TagKey = lru_string.GetInstance().Uuid()
 	}
 	i.dispatcherTagDao.Save(&tagEntity)
@@ -32,7 +32,6 @@ func (i *DispatcherTagServiceImpl) Save(tagSaveReq *dto.DispatcherTagSaveReq) {
 
 func (i *DispatcherTagServiceImpl) Delete(tagKey string) {
 	i.dispatcherTagDao.Delete("tag_key = ?", tagKey)
-	i.dispatcherMachineDao.DeleteTagByTagKey(tagKey)
 }
 
 func (i *DispatcherTagServiceImpl) List() []entity.DispatcherTag {

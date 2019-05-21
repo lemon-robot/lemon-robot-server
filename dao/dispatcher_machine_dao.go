@@ -27,9 +27,3 @@ func (i *DispatcherMachineDao) CountByUserExample(example *entity.DispatcherMach
 	db.Db().Model(&entity.DispatcherMachine{}).Where(example).Count(&count)
 	return count
 }
-
-func (i *DispatcherMachineDao) DeleteTagByTagKey(tagKey string) {
-	db.Db().Model(&entity.DispatcherMachine{}).Association("Tags").Delete(&entity.DispatcherTag{
-		TagKey: tagKey,
-	})
-}

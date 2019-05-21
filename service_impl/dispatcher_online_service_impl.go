@@ -16,7 +16,9 @@ func NewDispatcherOnlineServiceImpl() *DispatcherOnlineServiceImpl {
 }
 
 func (i *DispatcherOnlineServiceImpl) DeleteByOnlineKey(onlineKey string) {
-	i.dispatcherOnlineDao.Delete("online_key", onlineKey)
+	i.dispatcherOnlineDao.Delete(&entity.DispatcherOnline{
+		OnlineKey: onlineKey,
+	})
 }
 
 func (i *DispatcherOnlineServiceImpl) Save(dispatcherOnline *entity.DispatcherOnline) {
