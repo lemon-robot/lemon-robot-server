@@ -34,7 +34,7 @@ func dealConnectionClose(onlineKey string) {
 
 func ConnectHandler(context *gin.Context) {
 	token := context.Param("token")
-	onlineKey := lru_string.GetInstance().Uuid()
+	onlineKey := lru_string.GetInstance().Uuid(true)
 	if authService.CheckToken(token) {
 		os := context.Param("os")
 		arch := context.Param("arch")

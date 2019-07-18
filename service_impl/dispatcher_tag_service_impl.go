@@ -25,7 +25,7 @@ func (i *DispatcherTagServiceImpl) Save(tagSaveReq *dto.DispatcherTagSaveReq) {
 	})
 	tagEntity.TagName = tagSaveReq.TagName
 	if tagSaveReq.TagKey == "" || tagEntity.TagKey == "" {
-		tagEntity.TagKey = lru_string.GetInstance().Uuid()
+		tagEntity.TagKey = lru_string.GetInstance().Uuid(true)
 	}
 	i.dispatcherTagDao.Save(&tagEntity)
 }

@@ -27,7 +27,7 @@ func NewUserServiceImpl(passwordSecretKey string) *UserServiceImpl {
 
 func (i *UserServiceImpl) Create(number, password string) (error, entity.User) {
 	userEntity := entity.User{
-		UserKey:        lru_string.GetInstance().Uuid(),
+		UserKey:        lru_string.GetInstance().Uuid(true),
 		PasswordSecret: i.calculateSecretPassword(password),
 		UserNumber:     number}
 	result := db.Db().Create(&userEntity)
@@ -64,7 +64,7 @@ func (i *UserServiceImpl) SelfRepair() {
 	db.Db().Model(&entity.User{}).Count(&count)
 	if count == 0 {
 		numberNew := "lemonrobot"
-		passwordNew := lru_string.GetInstance().Uuid()
+		passwordNew := lru_string.GetInstance().Uuid(true)
 		err, _ := i.Create(numberNew, passwordNew)
 		if err != nil {
 			logger.Error("Error repair User, Can not create user", err)

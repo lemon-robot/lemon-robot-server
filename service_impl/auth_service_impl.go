@@ -30,7 +30,7 @@ func (i *AuthServiceImpl) GenerateJwtTokenStr(userKey string) string {
 func (i *AuthServiceImpl) generateJwtPayload(userKey string) model.LrJwtPayload {
 	expireDur, _ := time.ParseDuration(fmt.Sprintf("%dm", sysinfo.LrServerConfig().LoginAuthLength))
 	return model.LrJwtPayload{
-		Id:        lru_string.GetInstance().Uuid(),
+		Id:        lru_string.GetInstance().Uuid(true),
 		Issuer:    userKey,
 		IssuedAt:  time.Now().Unix(),
 		NotBefore: time.Now().Unix(),
