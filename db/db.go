@@ -46,7 +46,10 @@ func updateDb() {
 		entity.ParamValueDefine{},
 		entity.ServerNode{},
 		entity.Task{},
-		entity.User{})
+		entity.User{},
+		entity.EnvironmentComponent{},
+		entity.EnvironmentComponentVersion{},
+		entity.EnvironmentComponentDependencyRelation{})
 }
 
 func Db() *gorm.DB {

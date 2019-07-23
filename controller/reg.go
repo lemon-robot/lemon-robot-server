@@ -6,6 +6,7 @@ import (
 	"lemon-robot-golang-commons/model"
 	"lemon-robot-server/controller/controller_dispatcher_machine"
 	"lemon-robot-server/controller/controller_dispatcher_tag"
+	"lemon-robot-server/controller/controller_enviroment"
 	"lemon-robot-server/controller/controller_file_resource"
 	"lemon-robot-server/controller/controller_server_node"
 	"lemon-robot-server/controller/controller_task"
@@ -28,6 +29,7 @@ func RegAllApis(engine *gin.Engine) {
 	controller_server_node.RegApis(authRouter)
 	controller_task.RegApis(authRouter)
 	controller_user.RegApis(authRouter)
+	controller_enviroment.RegApis(authRouter)
 }
 
 func cors() gin.HandlerFunc {
