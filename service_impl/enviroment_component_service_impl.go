@@ -23,20 +23,25 @@ func (i *EnviromentComponentServiceImpl) Save(been *entity.EnvironmentComponent)
 		been.CreatedAt = time.Now()
 		return i.enviromentComponentDao.Create(been)
 	}else {
+		error, queryEnviromentComponent := i.enviromentComponentDao.QueryOne(been.EnvironmentComponentKey)
+		if error != nil {
+			return error, queryEnviromentComponent
+		}
 		been.UpdatedAt = time.Now()
 		return i.enviromentComponentDao.Update(been)
 	}
 }
 
 func (i *EnviromentComponentServiceImpl) Delete(key string) error {
+	error, queryEnviromentComponent := i.enviromentComponentDao.QueryOne(key)
+	if error != nil {
+		return error
+	}
 	currentTime:=time.Now()
-	environmentComponent := entity.EnvironmentComponent{}
-	environmentComponent.EnvironmentComponentKey = key
-	return i.enviromentComponentDao.Delete(&environmentComponent, currentTime)
+	queryEnviromentComponent.DeletedAt = &currentTime
+	return i.enviromentComponentDao.Delete(&queryEnviromentComponent, currentTime)
 }
 
-func (i *EnviromentComponentServiceImpl) Query(key string) (error, entity.EnvironmentComponent) {
-	been := &entity.EnvironmentComponent{}
-	been.EnvironmentComponentKey = key
-	return i.enviromentComponentDao.Query(been.EnvironmentComponentKey)
+func (i *EnviromentComponentServiceImpl) QueryList() (error, []entity.EnvironmentComponent) {
+	return i.enviromentComponentDao.QueryList()
 }

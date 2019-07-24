@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"fmt"
 	"lemon-robot-server/db"
 	"lemon-robot-server/entity"
 	"time"
@@ -30,8 +31,20 @@ func (i *EnviromentComponentDao)Update(been *entity.EnvironmentComponent) (error
 	return result.Error, *been
 }
 
-func (i *EnviromentComponentDao)Query(environmentComponentKey string) (error, entity.EnvironmentComponent) {
-	result := entity.EnvironmentComponent{}
-	queryResult := db.Db().First(&result, environmentComponentKey)
-	return queryResult.Error, result
+func (i *EnviromentComponentDao)QueryList() (error, []entity.EnvironmentComponent) {
+	var environmentComponents []entity.EnvironmentComponent
+	queryResult := db.Db().Find(&environmentComponents)
+	return queryResult.Error, environmentComponents
+}
+
+func (i *EnviromentComponentDao)QueryOne(environmentComponentKey string) (error, entity.EnvironmentComponent) {
+	environmentComponent := entity.EnvironmentComponent{}
+	example := entity.EnvironmentComponent{}
+	example.EnvironmentComponentKey = environmentComponentKey
+	query := db.Db().First(&environmentComponent, &example)
+	//query := db.Db().Where("environmentComponentKey = ?", environmentComponent).First(environmentComponent)
+	if query.Error != nil {
+		fmt.Println("query one error ================================== ", query.Error)
+	}
+	return query.Error, environmentComponent
 }
