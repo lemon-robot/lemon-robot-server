@@ -31,7 +31,8 @@ func (i *EnvironmentComponentDao)Update(been *entity.EnvironmentComponent) (erro
 
 func (i *EnvironmentComponentDao)QueryList() (error, []entity.EnvironmentComponent) {
 	var environmentComponents []entity.EnvironmentComponent
-	queryResult := db.Db().Find(&environmentComponents)
+	//queryResult := db.Db().Find(&environmentComponents)
+	queryResult := db.Db().Order("created_at desc").Find(&environmentComponents)
 	return queryResult.Error, environmentComponents
 }
 

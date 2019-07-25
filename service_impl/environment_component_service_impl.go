@@ -3,6 +3,7 @@ package service_impl
 import (
 	"lemon-robot-golang-commons/utils/lru_string"
 	"lemon-robot-server/dao"
+	"lemon-robot-server/dto"
 	"lemon-robot-server/entity"
 	"time"
 )
@@ -17,18 +18,26 @@ func NewEnvironmentComponentServiceImpl() *EnvironmentComponentServiceImpl {
 	}
 }
 
-func (i *EnvironmentComponentServiceImpl) Save(been *entity.EnvironmentComponent) (error, entity.EnvironmentComponent) {
-	if been.EnvironmentComponentKey == "" {
-		been.EnvironmentComponentKey = lru_string.GetInstance().Uuid(true)
-		been.CreatedAt = time.Now()
-		return i.environmentComponentDao.Create(been)
+func (i *EnvironmentComponentServiceImpl) Save(environmentComponentReq *dto.EnvironmentComponentReq) (error, dto.EnvironmentComponentReq) {
+	environmentComponent := entity.EnvironmentComponent{}
+	environmentComponent.EnvironmentComponentKey = environmentComponentReq.EnvironmentComponentKey
+	environmentComponent.EnvironmentComponentDescription = environmentComponentReq.EnvironmentComponentDescription
+	environmentComponent.EnvironmentComponentName = environmentComponentReq.EnvironmentComponentName
+	environmentComponent.CreatedAt = environmentComponentReq.CreatedAt
+	environmentComponent.UpdatedAt = environmentComponentReq.UpdatedAt
+	if environmentComponentReq.EnvironmentComponentKey == "" {
+		environmentComponentReq.EnvironmentComponentKey = lru_string.GetInstance().Uuid(true)
+		environmentComponentReq.CreatedAt = time.Now()
+		error, _ := i.environmentComponentDao.Create(&environmentComponent)
+		return error, *environmentComponentReq
 	}else {
-		error, queryEnvironmentComponent := i.environmentComponentDao.QueryOne(been.EnvironmentComponentKey)
+		error, _ := i.environmentComponentDao.QueryOne(environmentComponentReq.EnvironmentComponentKey)
 		if error != nil {
-			return error, queryEnvironmentComponent
+			return error, *environmentComponentReq
 		}
-		been.UpdatedAt = time.Now()
-		return i.environmentComponentDao.Update(been)
+		environmentComponentReq.UpdatedAt = time.Now()
+		err, _ := i.environmentComponentDao.Update(&environmentComponent)
+		return err, *environmentComponentReq
 	}
 }
 
@@ -42,6 +51,17 @@ func (i *EnvironmentComponentServiceImpl) Delete(key string) error {
 	return i.environmentComponentDao.Delete(&queryEnviromentComponent, currentTime)
 }
 
-func (i *EnvironmentComponentServiceImpl) QueryList() (error, []entity.EnvironmentComponent) {
-	return i.environmentComponentDao.QueryList()
+func (i *EnvironmentComponentServiceImpl) QueryList() (error, []dto.EnvironmentComponentReq) {
+	var environmentComponentReqs []dto.EnvironmentComponentReq
+	error, environmentComponents := i.environmentComponentDao.QueryList()
+	for _, v := range environmentComponents {
+		environmentComponentReq := dto.EnvironmentComponentReq{}
+		environmentComponentReq.EnvironmentComponentKey = v.EnvironmentComponentKey
+		environmentComponentReq.EnvironmentComponentName = v.EnvironmentComponentName
+		environmentComponentReq.EnvironmentComponentDescription = v.EnvironmentComponentDescription
+		environmentComponentReq.CreatedAt = v.CreatedAt
+		environmentComponentReq.UpdatedAt = v.UpdatedAt
+		environmentComponentReqs = append(environmentComponentReqs, environmentComponentReq)
+	}
+	return error, environmentComponentReqs
 }

@@ -1,9 +1,11 @@
 package service
 
-import "lemon-robot-server/entity"
+import (
+	"lemon-robot-server/dto"
+)
 
 type EnvironmentService interface {
-	Save(been *entity.EnvironmentComponent) (error, entity.EnvironmentComponent)
+	Save(been *dto.EnvironmentComponentReq) (error, dto.EnvironmentComponentReq)
 	Delete(key string) error
-	QueryList() (error, []entity.EnvironmentComponent)
+	QueryList() (error, []dto.EnvironmentComponentReq)
 }
