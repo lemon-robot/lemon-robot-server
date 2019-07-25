@@ -49,7 +49,8 @@ func updateDb() {
 		entity.User{},
 		entity.EnvironmentComponent{},
 		entity.EnvironmentComponentVersion{},
-		entity.EnvironmentComponentDependencyRelation{})
+		entity.EnvironmentComponentDependencyRelation{},
+		entity.OperatePlatform{})
 }
 
 func Db() *gorm.DB {

@@ -16,6 +16,7 @@ type EnvironmentComponentVersion struct {
 	ProgramFileResource           FileResource         `gorm:"ForeignKey:ProgramFileResourceKey;AssociationForeignKey:FileResourceKey" json:"programFileResource"`
 	ProgramFileResourceKey        string
 	WhereToInstall                string `gorm:"size:32" json:"whereToInstall"`
+	OperatePlatformKey            string `gorm:"size:64" json:"operatePlatformKey"`
 	CreatedAt                     time.Time
 	UpdatedAt                     time.Time
 	DeletedAt                     *time.Time `sql:"index"`

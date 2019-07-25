@@ -28,6 +28,8 @@ func (i *EnvironmentComponentServiceImpl) Save(environmentComponentReq *dto.Envi
 	if environmentComponentReq.EnvironmentComponentKey == "" {
 		environmentComponentReq.EnvironmentComponentKey = lru_string.GetInstance().Uuid(true)
 		environmentComponentReq.CreatedAt = time.Now()
+		environmentComponent.EnvironmentComponentKey = environmentComponentReq.EnvironmentComponentKey
+		environmentComponent.CreatedAt = environmentComponentReq.CreatedAt
 		error, _ := i.environmentComponentDao.Create(&environmentComponent)
 		return error, *environmentComponentReq
 	}else {

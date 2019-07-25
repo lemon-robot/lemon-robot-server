@@ -41,6 +41,6 @@ func (i *EnvironmentComponentVersionServiceImpl) Delete(belongEnvironmentCompone
 	return i.environmentComponentVersionDao.Delete(&queryOneiEnvironmentComponentVersion, time.Now())
 }
 
-func (i *EnvironmentComponentVersionServiceImpl) QueryList() (error, []entity.EnvironmentComponentVersion) {
+func (i *EnvironmentComponentVersionServiceImpl) QueryList(environmentComponentKey string) (error, []entity.EnvironmentComponentVersion) {
 	return i.environmentComponentVersionDao.QueryList()
 }

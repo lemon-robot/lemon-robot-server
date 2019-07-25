@@ -35,7 +35,7 @@ func save(ctx *gin.Context)  {
 }
 
 func queryList(ctx *gin.Context)  {
-	error, environmentComponentVersions := environmentComponentVersionService.QueryList()
+	error, environmentComponentVersions := environmentComponentVersionService.QueryList("sss")
 	if error != nil {
 		http_common.Failed(ctx, error.Error())
 	}else {
