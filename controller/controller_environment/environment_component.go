@@ -1,4 +1,4 @@
-package controller_enviroment
+package controller_environment
 
 import (
 	"fmt"
@@ -10,9 +10,9 @@ import (
 )
 
 
-var enviromentService service.EnviromentService = service_impl.NewEnviromentComponentServiceImpl()
+var environmentService service.EnvironmentService = service_impl.NewEnvironmentComponentServiceImpl()
 
-const urlPrefix = "/enviroment_component"
+const urlPrefix = "/environment_component"
 
 func RegApis(router *gin.RouterGroup)  {
 	router.PUT(urlPrefix, save)
@@ -27,7 +27,7 @@ func save(ctx *gin.Context)  {
 		fmt.Println("get request params error : ", err)
 		return
 	}
-	error, been := enviromentService.Save(environmentComponent)
+	error, been := environmentService.Save(environmentComponent)
 	if error != nil {
 		http_common.Failed(ctx, error.Error())
 	}else {
@@ -36,7 +36,7 @@ func save(ctx *gin.Context)  {
 }
 
 func queryList(ctx *gin.Context)  {
-	error, environmentComponents := enviromentService.QueryList()
+	error, environmentComponents := environmentService.QueryList()
 	if error != nil {
 		http_common.Failed(ctx, error.Error())
 	}else {
@@ -51,7 +51,7 @@ func delete(ctx *gin.Context)  {
 		fmt.Println("get request params error : ", err)
 		return
 	}
-	error := enviromentService.Delete(environmentComponent.EnvironmentComponentKey)
+	error := environmentService.Delete(environmentComponent.EnvironmentComponentKey)
 	if error != nil {
 		http_common.Failed(ctx, error.Error())
 	}else {
