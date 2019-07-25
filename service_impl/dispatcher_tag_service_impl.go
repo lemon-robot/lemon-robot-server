@@ -34,6 +34,14 @@ func (i *DispatcherTagServiceImpl) Delete(tagKey string) {
 	i.dispatcherTagDao.Delete("tag_key = ?", tagKey)
 }
 
-func (i *DispatcherTagServiceImpl) List() []entity.DispatcherTag {
-	return i.dispatcherTagDao.FindAllByExample(&entity.DispatcherTag{})
+func (i *DispatcherTagServiceImpl) List() []dto.DispatcherTagSaveReq {
+	dispatcherTags := i.dispatcherTagDao.FindAllByExample(&entity.DispatcherTag{})
+	var dispatcherTagSaveReqs []dto.DispatcherTagSaveReq
+	for _, v := range dispatcherTags {
+		dispatcherTagSaveReq := dto.DispatcherTagSaveReq{}
+		dispatcherTagSaveReq.TagKey = v.TagKey
+		dispatcherTagSaveReq.TagName = v.TagName
+		dispatcherTagSaveReqs = append(dispatcherTagSaveReqs, dispatcherTagSaveReq)
+	}
+	return dispatcherTagSaveReqs
 }
