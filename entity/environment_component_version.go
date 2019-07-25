@@ -15,8 +15,9 @@ type EnvironmentComponentVersion struct {
 	UninstallScript               string               `gorm:"type:longtext" json:"uninstallScript"`
 	ProgramFileResource           FileResource         `gorm:"ForeignKey:ProgramFileResourceKey;AssociationForeignKey:FileResourceKey" json:"programFileResource"`
 	ProgramFileResourceKey        string
-	WhereToInstall                string `gorm:"size:32" json:"whereToInstall"`
-	OperatePlatformKey            string `gorm:"size:64" json:"operatePlatformKey"`
+	WhereToInstall                string          `gorm:"size:32" json:"whereToInstall"`
+	BindOperatePlatform           OperatePlatform `gorm:"ForeignKey:BindOperatePlatformKey;AssociationForeignKey:OperatePlatformKey" json:"bindOperatePlatform"`
+	BindOperatePlatformKey        string          `gorm:"size:64" json:"bindOperatePlatformKey"`
 	CreatedAt                     time.Time
 	UpdatedAt                     time.Time
 	DeletedAt                     *time.Time `sql:"index"`
