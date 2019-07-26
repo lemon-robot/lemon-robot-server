@@ -1,6 +1,7 @@
 package controller_environment
 
 import (
+	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"lemon-robot-server/controller/http_common"
@@ -26,6 +27,12 @@ func save(ctx *gin.Context)  {
 	err := ctx.BindJSON(&environmentComponent)
 	if err != nil {
 		fmt.Println("get request params error : ", err)
+		http_common.Failed(ctx, err.Error())
+		return
+	}
+	if environmentComponent.EnvironmentComponentKey == "" && environmentComponent.EnvironmentComponentName == "" {
+		err = errors.New("The parameter environmentComponentKey cannot be empty")
+		http_common.Failed(ctx, err.Error())
 		return
 	}
 	error, been := environmentService.Save(environmentComponent)
@@ -50,6 +57,12 @@ func delete(ctx *gin.Context)  {
 	err := ctx.BindJSON(&environmentComponent)
 	if err != nil {
 		fmt.Println("get request params error : ", err)
+		http_common.Failed(ctx, err.Error())
+		return
+	}
+	if environmentComponent.EnvironmentComponentKey == "" {
+		err = errors.New("The parameter environmentComponentKey cannot be empty")
+		http_common.Failed(ctx, err.Error())
 		return
 	}
 	error := environmentService.Delete(environmentComponent.EnvironmentComponentKey)
