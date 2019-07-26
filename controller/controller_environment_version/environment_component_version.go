@@ -3,6 +3,7 @@ package controller_environment_version
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"lemon-robot-golang-commons/logger"
 	"lemon-robot-server/controller/http_common"
 	"lemon-robot-server/entity"
 	"lemon-robot-server/service"
@@ -35,7 +36,9 @@ func save(ctx *gin.Context)  {
 }
 
 func queryList(ctx *gin.Context)  {
-	error, environmentComponentVersions := environmentComponentVersionService.QueryList("sss")
+	belongEnvironmentComponentKey := ctx.Query("belongEnvironmentComponentKey")
+	logger.Info("environment_component_version interface queryList:  belongEnvironmentComponentKey == " + belongEnvironmentComponentKey)
+	error, environmentComponentVersions := environmentComponentVersionService.QueryList(belongEnvironmentComponentKey)
 	if error != nil {
 		http_common.Failed(ctx, error.Error())
 	}else {

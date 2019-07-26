@@ -49,7 +49,6 @@ func (i *EnvironmentComponentServiceImpl) Delete(key string) error {
 		return error
 	}
 	currentTime:=time.Now()
-	//queryEnviromentComponent.DeletedAt = &currentTime
 	return i.environmentComponentDao.Delete(&queryEnviromentComponent, currentTime)
 }
 

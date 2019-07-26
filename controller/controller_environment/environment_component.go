@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"lemon-robot-server/controller/http_common"
 	"lemon-robot-server/dto"
-	"lemon-robot-server/entity"
 	"lemon-robot-server/service"
 	"lemon-robot-server/service_impl"
 )
@@ -53,7 +52,7 @@ func queryList(ctx *gin.Context)  {
 }
 
 func delete(ctx *gin.Context)  {
-	environmentComponent := &entity.EnvironmentComponent{}
+	environmentComponent := &dto.EnvironmentComponentReq{}
 	err := ctx.BindJSON(&environmentComponent)
 	if err != nil {
 		fmt.Println("get request params error : ", err)

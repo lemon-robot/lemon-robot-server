@@ -29,9 +29,11 @@ func (i *EnvironmentComponentVersionDao) Delete(been *entity.EnvironmentComponen
 	return result.Error
 }
 
-func (i *EnvironmentComponentVersionDao) QueryList() (error, []entity.EnvironmentComponentVersion) {
+func (i *EnvironmentComponentVersionDao) QueryList(belongEnvironmentComponentKey string) (error, []entity.EnvironmentComponentVersion) {
 	var environmentComponentVersions []entity.EnvironmentComponentVersion
-	result := db.Db().Find(&environmentComponentVersions)
+	exampleEnvironmentComponentVersion := entity.EnvironmentComponentVersion{}
+	exampleEnvironmentComponentVersion.BelongEnvironmentComponentKey = belongEnvironmentComponentKey
+	result := db.Db().Find(&environmentComponentVersions, exampleEnvironmentComponentVersion)
 	return result.Error, environmentComponentVersions
 }
 

@@ -11,6 +11,8 @@ type LrServerConfig struct {
 	DebugMode                 bool              `json:"debugMode"`
 	SecretHmacKeyword         string            `json:"secretHmacKeyword"`
 	ClusterNodeActiveInterval int               `json:"clusterNodeActiveInterval"` // unit: seconds
+	FileResourceType          string            `json:"fileResourceType"`
+	FileResourceConfig        map[string]string `json:"fileResourceConfig"`
 	GitType                   string            `json:"gitType"`
 	GitConfig                 map[string]string `json:"gitConfig"`
 }
