@@ -43,3 +43,12 @@ func (i *EnvironmentComponentDao)QueryOne(environmentComponentKey string) (error
 	query := db.Db().First(&environmentComponent, &example)
 	return query.Error, environmentComponent
 }
+
+func (i *EnvironmentComponentDao) QueryVersionCount(environmentComponentKey string) int {
+	var count int
+	example := entity.EnvironmentComponentVersion{}
+	example.BelongEnvironmentComponentKey = environmentComponentKey
+	//db.Db().Model(&entity.EnvironmentComponentVersion{}).Where("belong_environment_component_key = ?", environmentComponentKey).Count(&count)
+	db.Db().Model(&entity.EnvironmentComponentVersion{}).Where(example).Count(&count)
+	return count
+}

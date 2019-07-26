@@ -63,6 +63,7 @@ func (i *EnvironmentComponentServiceImpl) QueryList() (error, []dto.EnvironmentC
 		environmentComponentReq.EnvironmentComponentDescription = v.EnvironmentComponentDescription
 		environmentComponentReq.CreatedAt = v.CreatedAt
 		environmentComponentReq.UpdatedAt = v.UpdatedAt
+		environmentComponentReq.EnvironmentComponentVersionCount = i.environmentComponentDao.QueryVersionCount(v.EnvironmentComponentKey)
 		environmentComponentReqs = append(environmentComponentReqs, environmentComponentReq)
 	}
 	return error, environmentComponentReqs

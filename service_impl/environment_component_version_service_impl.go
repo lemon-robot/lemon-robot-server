@@ -18,13 +18,13 @@ func NewEnvironmentComponentVersionServiceImpl() *EnvironmentComponentVersionSer
 }
 
 func (i *EnvironmentComponentVersionServiceImpl) Save(been *entity.EnvironmentComponentVersion) (error, entity.EnvironmentComponentVersion) {
-	key := been.BelongEnvironmentComponentKey
-	if key == "" {
-		been.BelongEnvironmentComponentKey = lru_string.GetInstance().Uuid(true)
+	ecVersionKey := been.ECVersionKey
+	if ecVersionKey == "" {
+		been.ECVersionKey = lru_string.GetInstance().Uuid(true)
 		been.CreatedAt = time.Now()
 		return i.environmentComponentVersionDao.Create(been)
 	}else {
-		error, queryEnvironmentComponentVersion := i.environmentComponentVersionDao.QueryOne(key)
+		error, queryEnvironmentComponentVersion := i.environmentComponentVersionDao.QueryOne(ecVersionKey)
 		if error != nil {
 			return error, queryEnvironmentComponentVersion
 		}
