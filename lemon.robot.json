@@ -9,6 +9,10 @@
   "debugMode": true,
   "secretHmacKeyword": "lemon.robot.secret",
   "clusterNodeActiveInterval": 60,
+  "fileResourceType": "s3",
+  "fileResourceConfig": {
+
+  },
   "gitType": "gitea",
   "gitConfig": {
     "endpoint": "http://39.105.221.111:13000",
