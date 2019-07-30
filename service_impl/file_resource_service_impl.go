@@ -1,11 +1,13 @@
 package service_impl
 
 import (
-	//"github.com/aws/aws-sdk-go/aws"
-	//"github.com/aws/aws-sdk-go/aws/endpoints"
-	//"github.com/aws/aws-sdk-go/aws/session"
-	//"github.com/aws/aws-sdk-go/service/s3"
-	//"context"
+	"context"
+	"time"
+
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/endpoints"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -13,7 +15,6 @@ import (
 	"log"
 	"mime/multipart"
 	"os"
-	//"time"
 )
 
 var baseFilePath = "/home/zgy/Applications/golang/file_resource_oss/"
@@ -63,29 +64,29 @@ func saveFileDisk(file multipart.File, handler *multipart.FileHeader) (saveResul
  */
 func uploadOSS(fileName string, filePath string) (fileLoadUrl string) {
 
-	//sess := session.Must(session.NewSession(&aws.Config{
-	//	Region: aws.String(endpoints.ApSoutheast1RegionID),
-	//}))
-	//service := s3.New(sess)
-	//
-	//fp, err := os.Open(filePath)
-	//if err != nil {
-	//	fmt.Println("err ==== ", err.Error())
-	//}
-	////So(err, ShouldBeNil)
-	//defer fp.Close()
-	//
-	//ctx, cancel := context.WithTimeout(context.Background(), time.Duration(30)*time.Second)
-	//defer cancel()
-	//
-	//_, err = service.PutObjectWithContext(ctx, &s3.PutObjectInput{
-	//	Bucket: aws.String("lemon-robot-server-1258459529"),
-	//	Key:    aws.String("file-resource/" + fileName),
-	//	Body:   fp,
-	//})
-	//if err != nil {
-	//	fmt.Println("upload oss success")
-	//}
+	sess := session.Must(session.NewSession(&aws.Config{
+		Region: aws.String(endpoints.ApSoutheast1RegionID),
+	}))
+	service := s3.New(sess)
+
+	fp, err := os.Open(filePath)
+	if err != nil {
+		fmt.Println("err ==== ", err.Error())
+	}
+	//So(err, ShouldBeNil)
+	defer fp.Close()
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(30)*time.Second)
+	defer cancel()
+
+	_, err = service.PutObjectWithContext(ctx, &s3.PutObjectInput{
+		Bucket: aws.String("lemon-robot-server-1258459529"),
+		Key:    aws.String("file-resource/" + fileName),
+		Body:   fp,
+	})
+	if err != nil {
+		fmt.Println("upload oss success")
+	}
 	return "upload oss success"
 
 	//So(err, ShouldBeNil)
