@@ -1,11 +1,11 @@
 package service_impl
 
 import (
-	"aws-sdk-go/aws"
-	"aws-sdk-go/aws/endpoints"
-	"aws-sdk-go/aws/session"
-	"aws-sdk-go/service/s3"
-	"context"
+	//"github.com/aws/aws-sdk-go/aws"
+	//"github.com/aws/aws-sdk-go/aws/endpoints"
+	//"github.com/aws/aws-sdk-go/aws/session"
+	//"github.com/aws/aws-sdk-go/service/s3"
+	//"context"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -13,7 +13,7 @@ import (
 	"log"
 	"mime/multipart"
 	"os"
-	"time"
+	//"time"
 )
 
 var baseFilePath = "/home/zgy/Applications/golang/file_resource_oss/"
@@ -24,7 +24,7 @@ type FileResourceServiceImpl struct {
 
 func NewFileResourceServiceImpl() *FileResourceServiceImpl {
 	return &FileResourceServiceImpl{
-		fileResourceServiceDao : dao.NewFileResourceServiceDao(),
+		fileResourceServiceDao: dao.NewFileResourceServiceDao(),
 	}
 }
 
@@ -34,7 +34,7 @@ func (i *FileResourceServiceImpl) Upload(file multipart.File, handler *multipart
 		result := uploadOSS(fileName, filePath)
 		fmt.Println("result === ", result)
 		return result
-	}else {
+	} else {
 		return "save file fail"
 	}
 }
@@ -47,7 +47,7 @@ func saveFileDisk(file multipart.File, handler *multipart.FileHeader) (saveResul
 	out, err := os.Create(baseFilePath + filename)
 	if err != nil {
 		log.Fatal(err)
-		return false, "",""
+		return false, "", ""
 	}
 	defer out.Close()
 	_, err = io.Copy(out, file)
@@ -55,9 +55,8 @@ func saveFileDisk(file multipart.File, handler *multipart.FileHeader) (saveResul
 		log.Fatal(err)
 		return false, "", ""
 	}
-	return true, filename,  baseFilePath + filename
+	return true, filename, baseFilePath + filename
 }
-
 
 /**
  * 上传文件到oss中
@@ -123,7 +122,6 @@ func uploadOSS(fileName string, filePath string) (fileLoadUrl string) {
 //	}))
 //	return s3.New(sess)
 //}
-
 
 func readAll(filePth string) ([]byte, error) {
 	f, err := os.Open(filePth)
