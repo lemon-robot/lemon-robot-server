@@ -27,13 +27,12 @@ func upload(ctx *gin.Context)  {
 		fmt.Println("err === ", err.Error())
 		http_common.Failed(ctx, err.Error())
 	}else {
-		error, result := fileResourceService.Upload(file, handler)
+		result, error := fileResourceService.Upload(file, handler)
 		if error != nil {
 			http_common.Failed(ctx, error.Error())
 		}else {
-			http_common.Failed(ctx, result)
+			http_common.Success(ctx, result)
 		}
-
 	}
 }
 

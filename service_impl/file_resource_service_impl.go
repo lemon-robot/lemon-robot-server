@@ -6,7 +6,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
-	"io"
+	"lemon-robot-golang-commons/utils/lru_file"
+	"lemon-robot-golang-commons/utils/lru_string"
 	"lemon-robot-server/dao"
 	"mime/multipart"
 	"os"
@@ -31,46 +32,34 @@ func NewFileResourceServiceImpl() *FileResourceServiceImpl {
 	}
 }
 
-func (i *FileResourceServiceImpl) Upload(file multipart.File, handler *multipart.FileHeader) (error, string) {
-	error, fileName, filePath := saveFileDisk(file, handler)
+func (i *FileResourceServiceImpl) Upload(file multipart.File, handler *multipart.FileHeader) (string, error) {
+	error, fileName, filePath := lru_file.GetInstance().SaveFileToTemporary(file, handler)
 	if error != nil {
-		return error, ""
+		return "", error
+	}
+	uuidStr := lru_string.GetInstance().Uuid(true)
+	error, fileSuffixName := lru_string.GetInstance().GetFileSuffixName(fileName)
+	if error != nil {
+		return "", error
+	}
+	fileName = uuidStr + fileSuffixName
+	_, err := uploadOSS(fileName, filePath)
+	if err != nil {
+		return "", err
 	}else {
-		error, uploadResult := uploadOSS(fileName, filePath)
-		if error != nil {
-			return error, ""
-		}else {
-			os.Remove(filePath)
-			return nil, uploadResult
-		}
+		os.Remove(filePath)
+		return fileName, nil
 	}
-}
-
-/**
- * 保存文件到本地磁盘中
- */
-func saveFileDisk(file multipart.File, handler *multipart.FileHeader) (error, string, string) {
-	fileName := handler.Filename
-	out, err := os.Create(baseFilePath + fileName)
-	if err != nil {
-		return err, "", ""
-	}
-	defer out.Close()
-	_, err = io.Copy(out, file)
-	if err != nil {
-		return err, "", ""
-	}
-	return nil, fileName, baseFilePath + fileName
 }
 
 /**
  * 上传文件到oss中
  */
-func uploadOSS(fileName string, filePath string) (error, string) {
+func uploadOSS(fileName string, filePath string) (string, error) {
 	creds := credentials.NewStaticCredentials(secretId, secretKey, "", )
 	_, err := creds.Get()
 	if err != nil {
-		return errors.New("Credential error : " + err.Error()), ""
+		return "", errors.New("Credential error : " + err.Error())
 	}
 	sess := session.Must(session.NewSession(&aws.Config{
 		Credentials : creds,
@@ -84,7 +73,7 @@ func uploadOSS(fileName string, filePath string) (error, string) {
 	uploader := s3manager.NewUploader(sess)
 	f, err  := os.Open(filePath)
 	if err != nil {
-		return errors.New("open file error : " + err.Error()), ""
+		return "", errors.New("open file error : " + err.Error())
 	}
 	result, err := uploader.Upload(&s3manager.UploadInput{
 		Bucket: aws.String(bucket),
@@ -92,10 +81,10 @@ func uploadOSS(fileName string, filePath string) (error, string) {
 		Body:   f,
 	})
 	if err != nil {
-		return errors.New("uploadFile error : " + err.Error()), ""
+		return "", errors.New("uploadFile error : " + err.Error())
 	}
 
-	return nil, "loacation : " + result.Location
+	return "loacation : " + result.Location, nil
 
 }
 
