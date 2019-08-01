@@ -1,23 +1,25 @@
 package service_impl
 
 import (
-	"context"
-	"time"
-
+	"errors"
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/endpoints"
+	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/s3"
-	"fmt"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"io"
-	"io/ioutil"
 	"lemon-robot-server/dao"
-	"log"
 	"mime/multipart"
 	"os"
 )
 
-var baseFilePath = "/home/zgy/Applications/golang/file_resource_oss/"
+//var baseFilePath = "/home/zgy/Applications/golang/file_resource_oss/"
+var baseFilePath = os.TempDir()
+var secretId = "AKIDQeeM8gG4wnNk48qfBm8F5fYHj1S1wZlt"
+var secretKey = "Zsc6RYTEoDR4UjnkfMp20hFXqOkwsa5y"
+var region = "cos.ap-beijing"
+var endpoint = "https://cos.ap-beijing.myqcloud.com"
+var bucket = "lemon-robot-server-1258459529"
+var cosParentFile = "file-resource/"
 
 type FileResourceServiceImpl struct {
 	fileResourceServiceDao *dao.FileResourceServiceDao
@@ -29,105 +31,73 @@ func NewFileResourceServiceImpl() *FileResourceServiceImpl {
 	}
 }
 
-func (i *FileResourceServiceImpl) Upload(file multipart.File, handler *multipart.FileHeader) string {
-	save, fileName, filePath := saveFileDisk(file, handler)
-	if save {
-		result := uploadOSS(fileName, filePath)
-		fmt.Println("result === ", result)
-		return result
-	} else {
-		return "save file fail"
+func (i *FileResourceServiceImpl) Upload(file multipart.File, handler *multipart.FileHeader) (error, string) {
+	error, fileName, filePath := saveFileDisk(file, handler)
+	if error != nil {
+		return error, ""
+	}else {
+		error, uploadResult := uploadOSS(fileName, filePath)
+		if error != nil {
+			return error, ""
+		}else {
+			os.Remove(filePath)
+			return nil, uploadResult
+		}
 	}
 }
 
 /**
  * 保存文件到本地磁盘中
  */
-func saveFileDisk(file multipart.File, handler *multipart.FileHeader) (saveResult bool, fileName string, filePath string) {
-	filename := handler.Filename
-	out, err := os.Create(baseFilePath + filename)
+func saveFileDisk(file multipart.File, handler *multipart.FileHeader) (error, string, string) {
+	fileName := handler.Filename
+	out, err := os.Create(baseFilePath + fileName)
 	if err != nil {
-		log.Fatal(err)
-		return false, "", ""
+		return err, "", ""
 	}
 	defer out.Close()
 	_, err = io.Copy(out, file)
 	if err != nil {
-		log.Fatal(err)
-		return false, "", ""
+		return err, "", ""
 	}
-	return true, filename, baseFilePath + filename
+	return nil, fileName, baseFilePath + fileName
 }
 
 /**
  * 上传文件到oss中
  */
-func uploadOSS(fileName string, filePath string) (fileLoadUrl string) {
-
-	sess := session.Must(session.NewSession(&aws.Config{
-		Region: aws.String(endpoints.ApSoutheast1RegionID),
-	}))
-	service := s3.New(sess)
-
-	fp, err := os.Open(filePath)
+func uploadOSS(fileName string, filePath string) (error, string) {
+	creds := credentials.NewStaticCredentials(secretId, secretKey, "", )
+	_, err := creds.Get()
 	if err != nil {
-		fmt.Println("err ==== ", err.Error())
+		return errors.New("Credential error : " + err.Error()), ""
 	}
-	//So(err, ShouldBeNil)
-	defer fp.Close()
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(30)*time.Second)
-	defer cancel()
-
-	_, err = service.PutObjectWithContext(ctx, &s3.PutObjectInput{
-		Bucket: aws.String("lemon-robot-server-1258459529"),
-		Key:    aws.String("file-resource/" + fileName),
-		Body:   fp,
+	sess := session.Must(session.NewSession(&aws.Config{
+		Credentials : creds,
+		// 官网上面的地址是亚马逊的服务器, 这里区域改成自己的
+		Region : aws.String(region),
+		// 其他云的服务器
+		Endpoint : aws.String(endpoint),
+		// 打印错误信息
+		CredentialsChainVerboseErrors : aws.Bool(true),
+	}))
+	uploader := s3manager.NewUploader(sess)
+	f, err  := os.Open(filePath)
+	if err != nil {
+		return errors.New("open file error : " + err.Error()), ""
+	}
+	result, err := uploader.Upload(&s3manager.UploadInput{
+		Bucket: aws.String(bucket),
+		Key:    aws.String(cosParentFile + fileName),
+		Body:   f,
 	})
 	if err != nil {
-		fmt.Println("upload oss success")
+		return errors.New("uploadFile error : " + err.Error()), ""
 	}
-	return "upload oss success"
 
-	//So(err, ShouldBeNil)
+	return nil, "loacation : " + result.Location
 
-	//byteArr, err := readAll(filePath)
-	//if err != nil {
-	//	return "Error reading file"
-	//}
-	//leanCloudUrl := "https://foqprysq.api.lncld.net/1.1/files/test.png"
-	//req, err := http.NewRequest("POST", leanCloudUrl, bytes.NewBuffer(byteArr))
-	//req.Header.Set("X-LC-Id", "FOqprYsqFNQ2vlQh5cobzROX-gzGzoHsz")
-	//req.Header.Set("X-LC-Key", "iiIkDetwgoSvD988hNLW60pU")
-	//req.Header.Set("Content-Type", "image/png")
-	//client := &http.Client{}
-	//resp, err := client.Do(req)
-	//
-	//defer resp.Body.Close()
-	//
-	//body, err := ioutil.ReadAll(resp.Body)
-	//if err != nil {
-	//	// handle error
-	//}
-	//
-	//fmt.Println("请求结果 ================ ", string(body))
-	//return string(body)
 }
 
-/**
- * 获取s3服务
- */
-//func getS3Service() *S3 {
-//	sess := session.Must(session.NewSession(&aws.Config{
-//		Region: aws.String(endpoints.ApSoutheast1RegionID),
-//	}))
-//	return s3.New(sess)
-//}
 
-func readAll(filePth string) ([]byte, error) {
-	f, err := os.Open(filePth)
-	if err != nil {
-		return nil, err
-	}
-	return ioutil.ReadAll(f)
-}
+

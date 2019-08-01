@@ -27,21 +27,13 @@ func upload(ctx *gin.Context)  {
 		fmt.Println("err === ", err.Error())
 		http_common.Failed(ctx, err.Error())
 	}else {
-		http_common.Success(ctx, fileResourceService.Upload(file, handler))
+		error, result := fileResourceService.Upload(file, handler)
+		if error != nil {
+			http_common.Failed(ctx, error.Error())
+		}else {
+			http_common.Failed(ctx, result)
+		}
+
 	}
 }
 
-//func create(ctx *gin.Context) {
-//	http_common.Success(ctx, service_file_resource.GenerateFileResourceKey())
-//}
-//
-//func upload(ctx *gin.Context) {
-//	file, fileHeader, err := ctx.Request.FormFile(formFileKey)
-//	if err != nil {
-//		http_common.Failed(ctx, http_error_code_define.FileResource_AnalysisFailed)
-//	} else {
-//		fileResourceKey := ctx.Request.Header[headerFileResourceKeyField][0]
-//		success, code := service_file_resource.UploadFileResource(file, fileHeader, fileResourceKey)
-//		http_common.Response(ctx, success, code, nil)
-//	}
-//}
