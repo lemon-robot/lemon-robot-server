@@ -12,5 +12,5 @@ type FileResource struct {
 	ContentType      string `gorm:"size:128" json:"contentType"`
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
-	DeleteAt         time.Time
+	DeleteAt         *time.Time
 }

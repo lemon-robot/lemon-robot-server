@@ -23,13 +23,13 @@ func (i *EnvironmentComponentServiceImpl) Save(environmentComponentReq *dto.Envi
 	environmentComponent.EnvironmentComponentKey = environmentComponentReq.EnvironmentComponentKey
 	environmentComponent.EnvironmentComponentDescription = environmentComponentReq.EnvironmentComponentDescription
 	environmentComponent.EnvironmentComponentName = environmentComponentReq.EnvironmentComponentName
-	environmentComponent.CreatedAt = environmentComponentReq.CreatedAt
-	environmentComponent.UpdatedAt = environmentComponentReq.UpdatedAt
+	//environmentComponent.CreatedAt = environmentComponentReq.CreatedAt
+	//environmentComponent.UpdatedAt = environmentComponentReq.UpdatedAt
 	if environmentComponentReq.EnvironmentComponentKey == "" {
 		environmentComponentReq.EnvironmentComponentKey = lru_string.GetInstance().Uuid(true)
-		environmentComponentReq.CreatedAt = time.Now()
+		//environmentComponentReq.CreatedAt = time.Now()
 		environmentComponent.EnvironmentComponentKey = environmentComponentReq.EnvironmentComponentKey
-		environmentComponent.CreatedAt = environmentComponentReq.CreatedAt
+		//environmentComponent.CreatedAt = environmentComponentReq.CreatedAt
 		error, _ := i.environmentComponentDao.Create(&environmentComponent)
 		return error, *environmentComponentReq
 	}else {
@@ -37,7 +37,7 @@ func (i *EnvironmentComponentServiceImpl) Save(environmentComponentReq *dto.Envi
 		if error != nil {
 			return error, *environmentComponentReq
 		}
-		environmentComponentReq.UpdatedAt = time.Now()
+		//environmentComponentReq.UpdatedAt = time.Now()
 		err, _ := i.environmentComponentDao.Update(&environmentComponent)
 		return err, *environmentComponentReq
 	}
@@ -60,8 +60,8 @@ func (i *EnvironmentComponentServiceImpl) QueryList() (error, []dto.EnvironmentC
 		environmentComponentReq.EnvironmentComponentKey = v.EnvironmentComponentKey
 		environmentComponentReq.EnvironmentComponentName = v.EnvironmentComponentName
 		environmentComponentReq.EnvironmentComponentDescription = v.EnvironmentComponentDescription
-		environmentComponentReq.CreatedAt = v.CreatedAt
-		environmentComponentReq.UpdatedAt = v.UpdatedAt
+		//environmentComponentReq.CreatedAt = v.CreatedAt
+		//environmentComponentReq.UpdatedAt = v.UpdatedAt
 		environmentComponentReq.EnvironmentComponentVersionCount = i.environmentComponentDao.QueryVersionCount(v.EnvironmentComponentKey)
 		environmentComponentReqs = append(environmentComponentReqs, environmentComponentReq)
 	}

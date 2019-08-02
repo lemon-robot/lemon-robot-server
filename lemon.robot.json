@@ -11,7 +11,12 @@
   "clusterNodeActiveInterval": 60,
   "fileResourceType": "s3",
   "fileResourceConfig": {
-
+    "secretId": "AKIDQeeM8gG4wnNk48qfBm8F5fYHj1S1wZlt",
+    "secretKey": "Zsc6RYTEoDR4UjnkfMp20hFXqOkwsa5y",
+    "region": "cos.ap-beijing",
+    "endpoint": "https://cos.ap-beijing.myqcloud.com",
+    "bucket": "lemon-robot-server-1258459529",
+    "rootPath": "file-resource/"
   },
   "gitType": "gitea",
   "gitConfig": {

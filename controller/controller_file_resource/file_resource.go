@@ -21,13 +21,12 @@ func RegApis(router *gin.RouterGroup) {
 }
 
 func upload(ctx *gin.Context)  {
-	// 先在磁盘中接收文件,然后再上传到oss中, 完成后再返回给客户端key(uuid), 最后删除磁盘文件
 	file, handler, err := ctx.Request.FormFile("file")
 	if err != nil {
 		fmt.Println("err === ", err.Error())
 		http_common.Failed(ctx, err.Error())
 	}else {
-		result, error := fileResourceService.Upload(file, handler)
+		result, error := fileResourceService.Upload(ctx, file, handler)
 		if error != nil {
 			http_common.Failed(ctx, error.Error())
 		}else {

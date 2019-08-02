@@ -1,7 +1,10 @@
 package service
 
-import "mime/multipart"
+import (
+	"github.com/gin-gonic/gin"
+	"mime/multipart"
+)
 
 type FileResourceService interface {
-	Upload(multipart.File, *multipart.FileHeader) (string, error)
+	Upload(*gin.Context, multipart.File, *multipart.FileHeader) (string, error)
 }

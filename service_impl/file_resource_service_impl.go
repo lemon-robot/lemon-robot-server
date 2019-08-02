@@ -6,21 +6,15 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	"github.com/gin-gonic/gin"
 	"lemon-robot-golang-commons/utils/lru_file"
 	"lemon-robot-golang-commons/utils/lru_string"
 	"lemon-robot-server/dao"
+	"lemon-robot-server/entity"
+	"lemon-robot-server/sysinfo"
 	"mime/multipart"
 	"os"
 )
-
-//var baseFilePath = "/home/zgy/Applications/golang/file_resource_oss/"
-var baseFilePath = os.TempDir()
-var secretId = "AKIDQeeM8gG4wnNk48qfBm8F5fYHj1S1wZlt"
-var secretKey = "Zsc6RYTEoDR4UjnkfMp20hFXqOkwsa5y"
-var region = "cos.ap-beijing"
-var endpoint = "https://cos.ap-beijing.myqcloud.com"
-var bucket = "lemon-robot-server-1258459529"
-var cosParentFile = "file-resource/"
 
 type FileResourceServiceImpl struct {
 	fileResourceServiceDao *dao.FileResourceServiceDao
@@ -32,31 +26,44 @@ func NewFileResourceServiceImpl() *FileResourceServiceImpl {
 	}
 }
 
-func (i *FileResourceServiceImpl) Upload(file multipart.File, handler *multipart.FileHeader) (string, error) {
-	error, fileName, filePath := lru_file.GetInstance().SaveFileToTemporary(file, handler)
+func (i *FileResourceServiceImpl) Upload(ctx *gin.Context, file multipart.File, handler *multipart.FileHeader) (string, error) {
+	originalFileName, filePath, fileInfo, error := lru_file.GetInstance().SaveFileToTemporary(file, handler)
 	if error != nil {
 		return "", error
 	}
 	uuidStr := lru_string.GetInstance().Uuid(true)
-	error, fileSuffixName := lru_string.GetInstance().GetFileSuffixName(fileName)
+	error, fileSuffixName := lru_string.GetInstance().GetFileSuffixName(originalFileName)
 	if error != nil {
 		return "", error
 	}
-	fileName = uuidStr + fileSuffixName
-	_, err := uploadOSS(fileName, filePath)
+	fileName := uuidStr + fileSuffixName
+	_, err := uploadFileToOSS(fileName, filePath)
 	if err != nil {
 		return "", err
-	}else {
-		os.Remove(filePath)
-		return fileName, nil
 	}
+	been := entity.FileResource{}
+	been.FileResourceKey = lru_string.GetInstance().Uuid(true)
+	been.SourceType = fileSuffixName
+	been.OriginalFileName = originalFileName
+	been.FileExtension = fileSuffixName[1 :len(fileSuffixName) - 1]
+	been.FileSize = fileInfo.Size()
+	been.FilePath = fileName
+	//been.ContentType = handler.Header.Get("ContentType")
+	been.ContentType = ctx.Request.Header.Get("ContentType")
+	error = i.fileResourceServiceDao.Create(&been)
+	if error != nil {
+		return "", error
+	}
+	return fileName, nil
 }
 
 /**
  * 上传文件到oss中
  */
-func uploadOSS(fileName string, filePath string) (string, error) {
-	creds := credentials.NewStaticCredentials(secretId, secretKey, "", )
+func uploadFileToOSS(fileName string, filePath string) (string, error) {
+	config := sysinfo.LrServerConfig()
+	s3 := config.FileResourceConfig
+	creds := credentials.NewStaticCredentials(s3["secretId"], s3["secretKey"], "", )
 	_, err := creds.Get()
 	if err != nil {
 		return "", errors.New("Credential error : " + err.Error())
@@ -64,9 +71,9 @@ func uploadOSS(fileName string, filePath string) (string, error) {
 	sess := session.Must(session.NewSession(&aws.Config{
 		Credentials : creds,
 		// 官网上面的地址是亚马逊的服务器, 这里区域改成自己的
-		Region : aws.String(region),
+		Region : aws.String(s3["secretKey"]),
 		// 其他云的服务器
-		Endpoint : aws.String(endpoint),
+		Endpoint : aws.String(s3["endpoint"]),
 		// 打印错误信息
 		CredentialsChainVerboseErrors : aws.Bool(true),
 	}))
@@ -76,8 +83,8 @@ func uploadOSS(fileName string, filePath string) (string, error) {
 		return "", errors.New("open file error : " + err.Error())
 	}
 	result, err := uploader.Upload(&s3manager.UploadInput{
-		Bucket: aws.String(bucket),
-		Key:    aws.String(cosParentFile + fileName),
+		Bucket: aws.String(s3["bucket"]),
+		Key:    aws.String(s3["rootPath"] + fileName),
 		Body:   f,
 	})
 	if err != nil {
@@ -85,7 +92,6 @@ func uploadOSS(fileName string, filePath string) (string, error) {
 	}
 
 	return "loacation : " + result.Location, nil
-
 }
 
 
