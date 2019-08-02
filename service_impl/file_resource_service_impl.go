@@ -14,6 +14,7 @@ import (
 	"lemon-robot-server/sysinfo"
 	"mime/multipart"
 	"os"
+	"strings"
 )
 
 type FileResourceServiceImpl struct {
@@ -45,16 +46,16 @@ func (i *FileResourceServiceImpl) Upload(ctx *gin.Context, file multipart.File, 
 	been.FileResourceKey = lru_string.GetInstance().Uuid(true)
 	been.SourceType = fileSuffixName
 	been.OriginalFileName = originalFileName
-	been.FileExtension = fileSuffixName[1 :len(fileSuffixName) - 1]
+	been.FileExtension = fileSuffixName[1 :len(fileSuffixName)]
 	been.FileSize = fileInfo.Size()
 	been.FilePath = fileName
-	//been.ContentType = handler.Header.Get("ContentType")
-	been.ContentType = ctx.Request.Header.Get("ContentType")
+	contentTypeAll := ctx.Request.Header.Get("Content-Type")
+	been.ContentType = contentTypeAll[: strings.Index(contentTypeAll, ";")]
 	error = i.fileResourceServiceDao.Create(&been)
 	if error != nil {
 		return "", error
 	}
-	return fileName, nil
+	return been.FileResourceKey, nil
 }
 
 /**
