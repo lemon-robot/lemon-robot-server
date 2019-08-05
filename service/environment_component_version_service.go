@@ -1,9 +1,11 @@
 package service
 
-import "lemon-robot-server/entity"
+import (
+	"lemon-robot-server/dto"
+)
 
 type EnvironmentComponentVersionService interface {
-	Save(been *entity.EnvironmentComponentVersion) (error, entity.EnvironmentComponentVersion)
-	Delete(belongEnvironmentComponentKey string) error
-	QueryList(environmentComponentKey string) (error, []entity.EnvironmentComponentVersion)
+	Save(been *dto.EnvironmentComponentVersionReq) (error, dto.EnvironmentComponentVersionReq)
+	Delete(ecVersionKey string) error
+	QueryList(environmentComponentKey string) (error, []dto.EnvironmentComponentVersionReq)
 }

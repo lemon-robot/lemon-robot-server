@@ -74,7 +74,7 @@ func uploadFileToOSS(fileName string, filePath string) (string, error) {
 		// 官网上面的地址是亚马逊的服务器, 这里区域改成自己的
 		Region : aws.String(s3["secretKey"]),
 		// 其他云的服务器
-		Endpoint : aws.String(s3["endpoint"]),
+		Endpoint : aws.String(s3["requestFront"] + s3["endpoint"]),
 		// 打印错误信息
 		CredentialsChainVerboseErrors : aws.Bool(true),
 	}))

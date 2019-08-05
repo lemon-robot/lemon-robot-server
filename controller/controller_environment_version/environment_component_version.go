@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"lemon-robot-golang-commons/logger"
 	"lemon-robot-server/controller/http_common"
+	"lemon-robot-server/dto"
 	"lemon-robot-server/entity"
 	"lemon-robot-server/service"
 	"lemon-robot-server/service_impl"
@@ -21,7 +22,7 @@ func RegApis(router *gin.RouterGroup)()  {
 }
 
 func save(ctx *gin.Context)  {
-	environmentComponentVersion := &entity.EnvironmentComponentVersion{}
+	environmentComponentVersion := &dto.EnvironmentComponentVersionReq{}
 	error := ctx.BindJSON(&environmentComponentVersion)
 	if error != nil {
 		fmt.Println("get request params error : ", error)
@@ -53,7 +54,7 @@ func delete(ctx *gin.Context)  {
 		fmt.Println("get request params error : ", error)
 		return
 	}
-	err := environmentComponentVersionService.Delete(environmentComponentVersion.BelongEnvironmentComponentKey)
+	err := environmentComponentVersionService.Delete(environmentComponentVersion.ECVersionKey)
 	if err != nil {
 		http_common.Failed(ctx, err.Error())
 	}else {

@@ -37,10 +37,10 @@ func (i *EnvironmentComponentVersionDao) QueryList(belongEnvironmentComponentKey
 	return result.Error, environmentComponentVersions
 }
 
-func (i *EnvironmentComponentVersionDao) QueryOne(belongEnvironmentComponentKey string) (error, entity.EnvironmentComponentVersion) {
+func (i *EnvironmentComponentVersionDao) QueryOne(ecVersionKey string) (error, entity.EnvironmentComponentVersion) {
 	resultEnvironmentComponentVersion := entity.EnvironmentComponentVersion{}
 	example := entity.EnvironmentComponentVersion{}
-	example.BelongEnvironmentComponentKey = belongEnvironmentComponentKey
+	example.ECVersionKey = ecVersionKey
 	result := db.Db().First(&resultEnvironmentComponentVersion, &example)
 	return result.Error, resultEnvironmentComponentVersion
 }

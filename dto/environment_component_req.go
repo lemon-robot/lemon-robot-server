@@ -5,4 +5,6 @@ type EnvironmentComponentReq struct {
 	EnvironmentComponentName         string `json:"environmentComponentName"`
 	EnvironmentComponentDescription  string `json:"environmentComponentDescription"`
 	EnvironmentComponentVersionCount int    `json:"environmentComonentVersionCount`
+	IconFileResourceKey              string `gorm:"size:64" json:"iconFileResourceKey"`
+	IconFileResourceUrl              string `json:"iconFileResourceUrl"`
 }
