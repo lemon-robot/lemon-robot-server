@@ -12,15 +12,11 @@ import (
 
 type EnvironmentComponentVersionServiceImpl struct {
 	environmentComponentVersionDao *dao.EnvironmentComponentVersionDao
-	environmentComponentDao *dao.EnvironmentComponentDao
-	operatePlatformDao *dao.OperatePlatformDao
 }
 
 func NewEnvironmentComponentVersionServiceImpl() *EnvironmentComponentVersionServiceImpl {
 	return &EnvironmentComponentVersionServiceImpl{
 		environmentComponentVersionDao : dao.NewEnvironmentComponentVersionDao(),
-		environmentComponentDao : dao.NewEnvironmentComponentDao(),
-		operatePlatformDao : dao.NewOperatePlatformDao(),
 	}
 }
 
@@ -72,7 +68,7 @@ func (i *EnvironmentComponentVersionServiceImpl) QueryList(belongEnvironmentComp
 		environmentComponentVersion.ECVersionKey = v.ECVersionKey
 		environmentComponentVersion.BelongEnvironmentComponentKey = belongEnvironmentComponentKey
 		// 嵌套对象:environmentComponent
-		_, environmentComponent := i.environmentComponentDao.QueryOne(belongEnvironmentComponentKey)
+		_, environmentComponent := dao.NewEnvironmentComponentDao().QueryOne(belongEnvironmentComponentKey)
 		environmentComponentReq := dto.EnvironmentComponentReq{}
 		environmentComponentReq.EnvironmentComponentKey = environmentComponent.EnvironmentComponentKey
 		environmentComponentReq.IconFileResourceKey = environmentComponent.IconFileResourceKey
@@ -88,7 +84,7 @@ func (i *EnvironmentComponentVersionServiceImpl) QueryList(belongEnvironmentComp
 
 		environmentComponentVersion.BindOperatePlatformKey = v.BindOperatePlatformKey
 		// 嵌套对象:OperatePlatform
-		operatePlatform,_ := i.operatePlatformDao.GetOnes(v.BindOperatePlatformKey)
+		operatePlatform,_ := dao.NewOperatePlatformDao().GetOnes(v.BindOperatePlatformKey)
 		operatePlatformReq := dto.OperatePlatformReq{}
 		operatePlatformReq.OperatePlatformRemark = operatePlatform.OperatePlatformRemark
 		operatePlatformReq.CpuArchTag = operatePlatform.CpuArchTag
