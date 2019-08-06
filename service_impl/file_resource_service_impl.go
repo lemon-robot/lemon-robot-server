@@ -32,6 +32,10 @@ func (i *FileResourceServiceImpl) Upload(ctx *gin.Context, file multipart.File, 
 	if error != nil {
 		return "", error
 	}
+	//log.Println("originalFileName == " + originalFileName)
+	//log.Println("filePath == " + filePath)
+	//log.Println("fileInfo.Size == " + strconv.FormatInt(fileInfo.Size(),10))
+
 	uuidStr := lru_string.GetInstance().Uuid(true)
 	error, fileSuffixName := lru_string.GetInstance().GetFileSuffixName(originalFileName)
 	if error != nil {
